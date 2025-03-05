@@ -36,7 +36,7 @@ function accountsManagement() {
     { name: 'View', 
       cell: (row) => (
         <div className='flex justify-center text-lg bg-cyan-600 h-10 w-10 rounded-lg items-center transition-transform transform hover:scale-105 hover:shadow-xl cursor-pointer'
-         onClick={()=> { document.getElementById('view-modal').showModal(); setSelectedData(row)}}>
+          onClick={()=> { document.getElementById('view-modal').showModal(); setSelectedData(row)}}>
           <FaEye/>
         </div>
       ),
@@ -98,6 +98,7 @@ function accountsManagement() {
           contactNumber: null,
           address: ''
         })
+        setData((prevData) => [...prevData, addUser.data.account])
         document.getElementById('add-user-modal').close()
       }
     }
@@ -130,6 +131,37 @@ function accountsManagement() {
           address: ''
         })
         document.getElementById('add-user-modal').close()
+        toast.error("Server Internal Error",{
+          position: "top-right"
+        })
+      }
+    }
+  }
+
+  // HANDLE SUBMIT CHANGE
+  const handleSubmitChange = async (e) => {
+    try{
+      e.preventDefault()
+      const updateUser = await axios.patch(`${urlAPI}/accounts/update-account/${selectedData._id}`, selectedData)
+      if(updateUser.data.success){
+        toast.success(updateUser.data.message,{
+          position: "top-right"
+        })
+        document.getElementById('edit-user-modal').close()
+        setData(data.map((item) => updateUser.data.account._id === item._id ? updateUser.data.account : item))
+      }
+    }
+    catch(err){
+      if(err.response.status === 500){
+        setErrorUpadate(err.response.data.error)
+      }else if(err.response.status === 404){
+        document.getElementById('edit-user-modal').close()
+        toast.error(err.response.data.message,{
+          position: "top-right"
+        })
+      }
+      else{
+        document.getElementById('edit-user-modal').close()
         toast.error("Server Internal Error",{
           position: "top-right"
         })
@@ -322,7 +354,7 @@ function accountsManagement() {
             <h3 className="font-semibold text-lg mb-5">Edit New User</h3>
             
             {/* Form to Create a User */}
-            <form method="dialog" className="space-y-4" onSubmit={handleSubmit}>
+            <form method="dialog" className="space-y-4" onSubmit={handleSubmitChange}>
               {/* Username */}
               <div>
                 <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">Edit Username</label>
@@ -374,7 +406,6 @@ function accountsManagement() {
                   id="password"
                   name="password"
                   onChange={(e)=> setSelectedData((prevData) => ({...prevData, password: e.target.value}))}
-                  required
                   className="input input-bordered w-full"
                 />
               </div>
