@@ -6,33 +6,50 @@ import backgroundImg from '../../assets/Nodado.jpg';
 const LoginPage = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState("")
   const navigate = useNavigate();
 
   const urlAPI = import.meta.env.VITE_API_URL
 
   useEffect(() => {
-    const checkToken = localStorage.getItem('token')
-    if(checkToken){
-      navigate('/dashboard/overview')
+    // CHECK IF ALREADY LOGGED IN
+    const verify = async () => {
+      try{
+        const response = await axios.get(`${urlAPI}/auth-api/protected`,{
+          withCredentials: true
+        })
+
+        if(response){
+          navigate('/dashboard/overview')
+        }
+      }
+      catch(error){
+        console.log(error.response)
+      }
     }
+
+    verify()
   }, [])
 
   const handleLogin = (e) => {
     e.preventDefault();
     
     // POST request to the backend
-    axios.post(`${urlAPI}/auth-api/login`, { username, password })
+    axios.post(`${urlAPI}/auth-api/login`, { username, password }, { withCredentials: true })
       .then(response => {
         if (response.data.success) {
           // Store the JWT token in localStorage
           localStorage.setItem('token', response.data.token);
           // Redirect to the dashboard after successful login
           navigate('/dashboard');
-        } else {
-          alert('Invalid credentials');
         }
       })
-      .catch(error => console.error('Login error:', error));
+      .catch(error => {
+        console.error('Login error:', error)
+        if(error.response){
+          setError(error.response.data.message)
+        }
+      });
   };
 
   return (
@@ -68,12 +85,7 @@ const LoginPage = () => {
               required
             />
           </div>
-          <div className="flex items-center justify-between">
-            <label className="flex items-center space-x-2">
-              <input type="checkbox" className="form-checkbox" />
-              <span>Stay signed in</span>
-            </label>
-          </div>
+          {error && <p className="text-red-500 text-md">{error}</p>}
           <button
             type="submit"
             className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
@@ -81,9 +93,6 @@ const LoginPage = () => {
             Sign In
           </button>
         </form>
-        <p className="text-center mt-6 text-gray-500">
-          Not yet Registered? <Link to="/register" className="text-blue-500">Register</Link>
-        </p>
       </div>
 
       {/* Right section with the background image */}

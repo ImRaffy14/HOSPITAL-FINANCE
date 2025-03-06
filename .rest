@@ -1,0 +1,16 @@
+
+## GET ALL ACCOUNTS
+GET http://localhost:4000/accounts//get-accounts
+
+
+## POST LOGIN
+###
+POST http://localhost:4000/auth-api/login
+Content-Type: application/json
+Accept: application/json
+
+{
+    "username": "raffy",
+    "password": "123"
+}
+

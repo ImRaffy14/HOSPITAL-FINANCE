@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Routes, Route, Link, NavLink, Navigate } from 'react-router-dom';
+import { Routes, Route, Link, NavLink, Navigate, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import AccountsManagement from '../Components/accountsManagement';
 import BudgetManagement from '../Components/budgetManagement';
@@ -29,28 +29,24 @@ function AdminPage() {
     const [profile, setProfile] = useState('')
 
     const urlAPI = import.meta.env.VITE_API_URL
+    const navigate = useNavigate();
 
     const handleSideNav = () => {
         setIsToggled(!isToggled);
     };
 
-    const handleLogout = () => {
-        localStorage.removeItem('token');
-        window.location.href = "/";
+    const handleLogout = async () => {
+        await axios.post(`${urlAPI}/auth-api/logout`, {username: profile.username}, {
+            withCredentials: true
+        })
+        navigate('/')
     };
 
     useEffect(() => {
-        const token = localStorage.getItem('token')
-        if(!token){
-            return window.location.href = "/";
-        }
-
         const verify = async () => {
             try{
                 const response = await axios.get(`${urlAPI}/auth-api/protected`,{
-                    headers:{
-                        Authorization: `Bearer ${token}`
-                    }
+                    withCredentials: true
                 })
     
                 if(response){
@@ -60,9 +56,10 @@ function AdminPage() {
             }
             catch(error){
                 console.log(error.response)
-                localStorage.removeItem('token')
-                alert('Error Verification')
-                window.location.href = "/";
+                toast.error('You are not authorized to view this page', {
+                    position: "top-right"
+                })
+                navigate('/')
             }
         }
 
@@ -73,9 +70,9 @@ function AdminPage() {
     if(isVerifying){
         return (
             <div className="flex items-center justify-center h-screen">
-              <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500"></div>
+                <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500"></div>
             </div>
-          );
+        );
     }
 
 
@@ -125,15 +122,15 @@ function AdminPage() {
                         </div>
                         {/* DATA */}
                         <Routes>
-                          <Route path="accountsManagement" element={<AccountsManagement/>} />
-                          <Route path="/" element={<Navigate to="/Dashboard/overview" />} />
-                          <Route path="overview" element={<Overview userData={profile}/>} />
-                          <Route path="budgetManagement" element={<BudgetManagement/>} />
-                          <Route path="insuranceClaims" element={<InsuranceClaims/>} />
-                          <Route path="paymentManagement" element={<PaymentManagement/>} />
-                          <Route path="financialReports" element={<FinancialReports/>} />
-                          <Route path="chartOfAccounts" element={<ChartOfAccounts/>} />
-                          <Route path="billing" element={<Billing />} />
+                            <Route path="accountsManagement" element={<AccountsManagement/>} />
+                            <Route path="/" element={<Navigate to="/Dashboard/overview" />} />
+                            <Route path="overview" element={<Overview userData={profile}/>} />
+                            <Route path="budgetManagement" element={<BudgetManagement/>} />
+                            <Route path="insuranceClaims" element={<InsuranceClaims/>} />
+                            <Route path="paymentManagement" element={<PaymentManagement/>} />
+                            <Route path="financialReports" element={<FinancialReports/>} />
+                            <Route path="chartOfAccounts" element={<ChartOfAccounts/>} />
+                            <Route path="billing" element={<Billing />} />
                         </Routes>
                     </div>
                 </div>

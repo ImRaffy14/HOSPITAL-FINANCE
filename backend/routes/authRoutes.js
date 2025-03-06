@@ -1,15 +1,16 @@
 const express = require('express');
 const User = require('../models/UserData');
-const { register, login } = require('../controllers/authController');
+const { register, login, logout } = require('../controllers/authController');
 const jwt = require('jsonwebtoken')
 const router = express.Router();
 
 router.post('/register', register);
 router.post('/login', login);
+router.post('/logout', logout); 
 
 // Verify Token Middleware
 const verifyToken = (req, res, next) => {
-    const token = req.header('Authorization').replace('Bearer ', '');
+    const token = req.cookies.token
     if (!token) return res.status(401).json({ message: 'No token, authorization denied' });
 
     try {
