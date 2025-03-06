@@ -7,7 +7,7 @@ exports.findAccounts = async () => {
     return result
 }
 
-
+// UPDATE ACCOUNT
 exports.updateAccount = async (id, data) => {
     const result = await accountRecords.findById(id)
     if (!result) throw new Error('Account not found')
@@ -31,4 +31,12 @@ exports.updateAccount = async (id, data) => {
         runValidators: true
     })
     return updatedAccount
+}
+
+// DELETE ACCOUNT
+exports.deleteAccount = async (id) => {
+    const result = await accountRecords.findById(id)
+    if (!result) throw new Error('Account not found')
+    const deletedUser = await accountRecords.findByIdAndDelete(id)
+    return deletedUser
 }

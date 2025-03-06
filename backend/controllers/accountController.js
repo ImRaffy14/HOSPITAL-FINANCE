@@ -11,12 +11,28 @@ exports.getAccounts = async (req, res) => {
     }
 }
 
+
+// UPDATE ACCOUNT
 exports.updateAccount = async (req, res) => {
     try {
         const account = await accountService.updateAccount(req.params.id, req.body);
         res.status(200).json({ 
             success: true, 
             message: `Account Updated for ${account.username}`, 
+            account });
+            
+    } catch (error) {
+        res.status(404).json({ message: error.message })
+    }
+}
+
+// DELETE ACCOUNT
+exports.deleteAccount = async (req, res) => {
+    try {
+        const account = await accountService.deleteAccount(req.params.id);
+        res.status(200).json({ 
+            success: true, 
+            message: `Account Deleted for ${account.username}`, 
             account });
             
     } catch (error) {

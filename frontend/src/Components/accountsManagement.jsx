@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import DataTable from 'react-data-table-component';
 import { TiUserAdd } from "react-icons/ti";
 import { FaEye, FaEdit } from "react-icons/fa";
+import { MdDelete } from "react-icons/md";
 import axios from 'axios'
 import { toast } from 'react-toastify'
 
@@ -43,7 +44,7 @@ function accountsManagement() {
       ignoreRowClick: true,
       allowOverflow: true,
       button: true,
-      width: '40px'
+      width: '60px'
     },
     { name: 'Edit', 
     cell: (row) => (
@@ -55,6 +56,19 @@ function accountsManagement() {
     ignoreRowClick: true,
     allowOverflow: true,
     button: true,
+    width: '60px'
+  },
+  { name: 'Delete', 
+    cell: (row) => (
+      <div className='flex justify-center text-lg bg-red-500 h-10 w-10 rounded-lg items-center transition-transform transform hover:scale-105 hover:shadow-xl cursor-pointer'
+      onClick={()=> { document.getElementById('delete-user-modal').showModal(); setSelectedData(row)}}>
+        <MdDelete />
+      </div>
+    ),
+    ignoreRowClick: true,
+    allowOverflow: true,
+    button: true,
+    width: '60px'
   }
   ];
 
@@ -162,6 +176,33 @@ function accountsManagement() {
       }
       else{
         document.getElementById('edit-user-modal').close()
+        toast.error("Server Internal Error",{
+          position: "top-right"
+        })
+      }
+    }
+  }
+
+  // HANDLE DELETE USER
+  const handleDeleteUser = async (e) => {
+    e.preventDefault()
+    try {
+      const result = await axios.delete(`${urlAPI}/accounts/delete-account/${selectedData._id}`)
+      if(result.data.success){
+        toast.success(result.data.message,{
+          position: "top-right"
+        })
+        setData(data.filter((item) => item._id !== selectedData._id))
+        document.getElementById('delete-user-modal').close()
+      }
+    } catch (error) {
+      if(error.response){
+        document.getElementById('delete-user-modal').close()
+        toast.error(error.response.data.message,{
+          position: "top-right"
+        })
+      }
+      else{
         toast.error("Server Internal Error",{
           position: "top-right"
         })
@@ -464,6 +505,26 @@ function accountsManagement() {
                 {/* Close Button */}
                 <button type="button" className="btn btn-error" onClick={() => document.getElementById('edit-user-modal').close()}>
                   Close
+                </button>
+              </div>
+            </form>
+          </div>
+        </dialog>
+
+
+         {/* MODAL FOR DELETE USER */}
+        <dialog id="delete-user-modal" className="modal">
+          <div className="modal-box">
+            <h3 className="font-semibold text-lg mb-4">Delete User</h3>
+            <form method="dialog" className="space-y-4" onSubmit={handleDeleteUser}>
+              <h3 className="font-semibold text-md mb-5">Are you sure you want to delete this user?</h3>
+              <div className="modal-action">
+                {/* Delete Button */}
+                <button type="submit" className="btn btn-success">Yes</button>
+                
+                {/* Close Button */}
+                <button type="button" className="btn btn-error" onClick={() => document.getElementById('delete-user-modal').close()}>
+                  No
                 </button>
               </div>
             </form>
