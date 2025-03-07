@@ -13,26 +13,12 @@ export const SocketProvider = ({ children }) => {
 
     const urlAPI = import.meta.env.VITE_API_URL
 
-    const isAuthenticated = () => {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          console.error('No token found');
-          return false;
-        }
-        return true;
-      };
-
     useEffect(() => {
-        if(isAuthenticated()){
-
-            const newSocket = io.connect(urlAPI);
-            setSocket(newSocket);
-            return () => {
-                newSocket.disconnect();
-            };
-        }else{
-            return;
-        }
+        const newSocket = io.connect(urlAPI);
+        setSocket(newSocket);
+        return () => {
+            newSocket.disconnect();
+        };
     }, []);
 
     return (

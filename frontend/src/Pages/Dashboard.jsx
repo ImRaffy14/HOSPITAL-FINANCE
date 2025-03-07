@@ -59,7 +59,7 @@ function AdminPage() {
                 toast.error('You are not authorized to view this page', {
                     position: "top-right"
                 })
-                navigate('/')
+                handleLogout()
             }
         }
 

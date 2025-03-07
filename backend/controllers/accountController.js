@@ -19,8 +19,9 @@ exports.updateAccount = async (req, res) => {
         res.status(200).json({ 
             success: true, 
             message: `Account Updated for ${account.username}`, 
-            account });
-            
+            });
+
+        req.io.emit('update-user', account)
     } catch (error) {
         res.status(404).json({ message: error.message })
     }
@@ -33,8 +34,9 @@ exports.deleteAccount = async (req, res) => {
         res.status(200).json({ 
             success: true, 
             message: `Account Deleted for ${account.username}`, 
-            account });
-            
+            });
+
+        req.io.emit('delete-user', account)  
     } catch (error) {
         res.status(404).json({ message: error.message })
     }

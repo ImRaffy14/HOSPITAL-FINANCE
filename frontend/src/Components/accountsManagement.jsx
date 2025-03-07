@@ -6,6 +6,7 @@ import { FaEye, FaEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import axios from 'axios'
 import { toast } from 'react-toastify'
+import { useSocket } from '../context/socketContext'
 
 
 function accountsManagement() {
@@ -25,6 +26,7 @@ function accountsManagement() {
   })
 
   const urlAPI = import.meta.env.VITE_API_URL
+  const socket = useSocket()
 
   const columns = [
     { name: 'Account ID', selector: row => row._id, width: "200px" },
@@ -74,6 +76,7 @@ function accountsManagement() {
 
   // GET USER'S LIST
   useEffect(() => {
+    if (!socket) return;
     
     const getUsers = async () => {
       const result = await axios.get(`${urlAPI}/accounts/get-accounts`)
@@ -81,7 +84,32 @@ function accountsManagement() {
     }
 
     getUsers()
-  }, [])
+
+    // GET NEW USER
+    const getNewUser = async (response) => {
+      setData((prevData) => [...prevData, response]);
+    }
+
+    // UPDATE USER
+    const updateUser = async (response) => {
+      setData((prevData) => prevData.map((data) => data._id === response._id ? response : data))
+    }
+
+    // DELETE USER
+    const deleteUser = async (response) => {
+      setData((prevData) => prevData.filter((data) => data._id !== response._id))
+    }
+
+    socket.on('new-user', getNewUser)
+    socket.on('update-user', updateUser)
+    socket.on('delete-user', deleteUser)
+    
+    return () => {
+      socket.off('new-user')
+      socket.off('update-user')
+      socket.off('delete-user')
+    }
+  }, [socket])
 
 
   const handleSearch = (event) => {
@@ -112,7 +140,6 @@ function accountsManagement() {
           contactNumber: null,
           address: ''
         })
-        setData((prevData) => [...prevData, addUser.data.account])
         document.getElementById('add-user-modal').close()
       }
     }
@@ -162,7 +189,6 @@ function accountsManagement() {
           position: "top-right"
         })
         document.getElementById('edit-user-modal').close()
-        setData(data.map((item) => updateUser.data.account._id === item._id ? updateUser.data.account : item))
       }
     }
     catch(err){
@@ -192,7 +218,6 @@ function accountsManagement() {
         toast.success(result.data.message,{
           position: "top-right"
         })
-        setData(data.filter((item) => item._id !== selectedData._id))
         document.getElementById('delete-user-modal').close()
       }
     } catch (error) {
