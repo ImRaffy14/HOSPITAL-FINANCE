@@ -34,13 +34,13 @@ function BillingModalPdf({ selectedData, onClose}) {
     return (
         <dialog id="generate-billing-pdf-modal" className="modal">
             <div className="modal-box max-w-6xl">
-                <div ref={pdfRef} className="flex flex-col justify-center w-full p-8 bg-white text-black border shadow-lg">
+                <div ref={pdfRef} className="flex flex-col justify-center w-full p-8 bg-white text-black border">
                     {/* Header */}
                     <div className="flex flex-col items-center mb-10">
-                        <img src={logo} className=" w-20 " />
+                        <img src={logo} className=" w-[150px]" />
                         <div className="text-center mb-5">
                             <h1 className="text-2xl font-bold">Nodado General Hospital</h1>
-                            <p className="text-sm text-gray-600">123 Healthcare Street, Manila, Philippines</p>
+                            <p className="text-sm text-gray-600">Capt. F. S. Samano, Camarin, Caloocan, 1400 Metro Manila</p>
                             <hr className="mt-2 border-gray-400" />
                         </div>
                     </div>
@@ -83,9 +83,9 @@ function BillingModalPdf({ selectedData, onClose}) {
 
                     {/* Billing Summary */}
                     <div className="mt-5">
-                    <p><strong>Sub Total:</strong> {formatCurrency((selectedData?.totalAmount || 0) - selectedData?.taxAmount )}</p>
-                        <p><strong>Doctor Tax:</strong> {selectedData?.doctorTax || 0}%</p>
-                        <p><strong>Tax Amount:</strong> {formatCurrency(selectedData?.taxAmount || 0)}</p>
+                    <p><strong>Sub Total:</strong> {formatCurrency((selectedData?.totalAmount || 0) + selectedData?.taxAmount )}</p>
+                        <p><strong>Discount:</strong> {selectedData?.doctorTax || 0}%</p>
+                        <p><strong>Discount Amount:</strong> {formatCurrency(selectedData?.taxAmount || 0)}</p>
                         <hr className="my-2 border-gray-400" />
                         <p className="text-lg font-bold"><strong>Total Amount:</strong> {formatCurrency(selectedData?.totalAmount || 0)}</p>
                     </div>

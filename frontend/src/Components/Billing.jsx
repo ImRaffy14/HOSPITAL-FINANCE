@@ -162,7 +162,7 @@ function Billing() {
     const calculateTax = () => (calculateSubtotal() * billingData.doctorTax) / 100;
 
     // Calculate total with tax
-    const calculateTotal = () => calculateSubtotal() + calculateTax();
+    const calculateTotal = () => calculateSubtotal() - calculateTax();
 
     // Review billing before submitting
     const handleReviewBilling = (event) => {
@@ -286,6 +286,8 @@ function Billing() {
                     value={billingData.patientAge}
                     onChange={(e) => handleInputChange("patient", null, e)}
                     className="input input-bordered w-full"
+                    max={100}
+                    min={1}
                     required
                   />
                 </div>
