@@ -35,7 +35,7 @@ function Billing() {
   
     const columns = [
       { name: 'Billing ID', selector: row => row._id, width: '200px' },
-      { name: 'Patient Name', selector: row => row.patientName, width: '140px' },
+      { name: 'Patient Name', selector: row => row.patientName, width: '130px' },
       { name: 'Patient Age', selector: row => row.patientAge, width: '100px' },
       { name: 'Services', selector: row => (
         <ul>
@@ -52,8 +52,8 @@ function Billing() {
         </ul>
       )},
       { name: 'Doctor Tax', selector: row => `${row.doctorTax}%`, width: '100px' },
-      { name: 'Total Amount', selector: row => formatCurrency(row.totalAmount), width: '130px' },
-      { name: 'Payment Status', selector: row => row.paymentStatus, width: '150px' },
+      { name: 'Total Amount', selector: row => formatCurrency(row.totalAmount), width: '120px' },
+      { name: 'Payment Status', selector: row => row.paymentStatus, width: '130px' },
       { name: 'Date Created', selector: row => row.createdAt },
       { name: 'View', 
       cell: (row) => (
