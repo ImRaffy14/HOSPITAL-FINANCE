@@ -11,6 +11,7 @@ const authRoutes = require('./routes/authRoutes');
 const budgetSocket = require('./controllers/budgetSocketController')
 const insuranceClaimSocket = require('./controllers/insuranceClaimsSocketController')
 const accountRoutes = require('./routes/accountRoutes')
+const billingRoutes = require('./routes/billingRoute')
 
 
 //Middlewares
@@ -42,7 +43,8 @@ app.use((req, res, next) => {
 
 // Routes
 app.use('/auth-api', authRoutes);
-app.use('/accounts', accountRoutes)
+app.use('/accounts', accountRoutes);
+app.use('/billing', billingRoutes);
 
 
 

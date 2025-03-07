@@ -91,7 +91,7 @@ function AdminPage() {
                             <li className='border-b border-gray-300 font-semibold'><NavLink to="/Dashboard/overview" activeClassName="bg-gray-700"><MdDashboard />DASHBOARD</NavLink></li>
                             {(profile.role === 'Accountant' || profile.role === 'Billing Officer' ) && (
                                 <ul className="menu menu-vertical">
-                                    <h1 className='text-center mt-5 border-b border-t border-gray-400 border-dotted text-md bg-slate-100'>BILLING</h1>
+                                    <h1 className='text-center mt-2 border-b border-t border-gray-400 border-dotted text-md bg-slate-100'>BILLING</h1>
                                     <li className='font-semibold'><NavLink to="billing" activeClassName="bg-gray-700"><FaMoneyBills />BILLING & INVOICE</NavLink></li>
                                     <h1 className='text-center border-b border-t border-gray-400 border-dotted text-md bg-slate-100'>FINANCE MANAGEMENT</h1>
                                     <li className='font-semibold'><NavLink to="budgetManagement" activeClassName="bg-gray-700"><FaMoneyBills />BUDGET MANAGEMENT</NavLink></li>
@@ -101,7 +101,7 @@ function AdminPage() {
                             )}
                             {(profile.role === 'Medical Director') && (
                                 <ul className="menu menu-vertical">
-                                    <h1 className='text-center mt-5 border-b border-t border-gray-400 border-dotted text-md bg-slate-100'>BILLING</h1>
+                                    <h1 className='text-center mt-2 border-b border-t border-gray-400 border-dotted text-md bg-slate-100'>BILLING</h1>
                                     <li className='font-semibold'><NavLink to="billing" activeClassName="bg-gray-700"><FaMoneyBills />BILLING & INVOICE</NavLink></li>
                                     <h1 className='text-center border-b border-t border-gray-400 border-dotted text-md bg-slate-100'>FINANCE MANAGEMENT</h1>
                                     <li className='font-semibold'><NavLink to="budgetManagement" activeClassName="bg-gray-700"><FaMoneyBills />BUDGET MANAGEMENT</NavLink></li>
