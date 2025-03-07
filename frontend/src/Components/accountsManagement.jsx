@@ -20,7 +20,7 @@ function accountsManagement() {
     fullName: '',
     email: '',
     password: '',
-    role: 'Head Finance',
+    role: 'Accountant',
     contactNumber: null,
     address: ''
   })
@@ -136,7 +136,7 @@ function accountsManagement() {
           fullName: '',
           email: '',
           password: '',
-          role: 'Head Finance',
+          role: 'Accountant',
           contactNumber: null,
           address: ''
         })
@@ -153,7 +153,7 @@ function accountsManagement() {
           fullName: '',
           email: '',
           password: '',
-          role: 'Head Finance',
+          role: 'Accountant',
           contactNumber: null,
           address: ''
         })
@@ -167,7 +167,7 @@ function accountsManagement() {
           fullName: '',
           email: '',
           password: '',
-          role: 'Head Finance',
+          role: 'Accountant',
           contactNumber: null,
           address: ''
         })
@@ -344,8 +344,9 @@ function accountsManagement() {
                   required
                   className="select select-bordered w-full"
                 >
-                  <option value="Head Finance">Head Finance</option>
-                  <option value="Finance Officer">Finance Officer</option>
+                  <option value="Accountant">Accountant</option>
+                  <option value="Billing Officer">Billing Officer</option>
+                  <option value="Medical Director">Medical Director</option>
                 </select>
               </div>
 
@@ -487,8 +488,9 @@ function accountsManagement() {
                   required
                   className="select select-bordered w-full"
                 >
-                  <option value="Head Finance">Head Finance</option>
-                  <option value="Finance Officer">Finance Officer</option>
+                  <option value="Accountant">Accountant</option>
+                  <option value="Billing Officer">Billing Officer</option>
+                  <option value="Medical Director">Medical Director</option>
                 </select>
               </div>
 

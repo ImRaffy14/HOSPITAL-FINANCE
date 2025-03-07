@@ -86,19 +86,34 @@ function AdminPage() {
                             <img src={Logo} className='h-[150px] w-[150px] mt-10' />
                             <h1 className='font-semibold text-md mt-3 text-center'>Nodado General Hospital</h1>
                         </div>
+
                         <ul className="menu menu-vertical mt-10">
                             <li className='border-b border-gray-300 font-semibold'><NavLink to="/Dashboard/overview" activeClassName="bg-gray-700"><MdDashboard />DASHBOARD</NavLink></li>
-                            <h1 className='text-center mt-5 border-b border-t border-gray-400 border-dotted text-md bg-slate-100'>BILLING</h1>
-                            <li className='font-semibold'><NavLink to="billing" activeClassName="bg-gray-700"><FaMoneyBills />BILLING & INVOICE</NavLink></li>
-                            <h1 className='text-center border-b border-t border-gray-400 border-dotted text-md bg-slate-100'>FINANCE MANAGEMENT</h1>
-                            <li className='font-semibold'><NavLink to="budgetManagement" activeClassName="bg-gray-700"><FaMoneyBills />BUDGET MANAGEMENT</NavLink></li>
-                            <li className='font-semibold'><NavLink to="insuranceClaims" activeClassName="bg-gray-700"><LuBaggageClaim />INSURANCE CLAIMS</NavLink></li>
-                            <li className='font-semibold'><NavLink to="paymentManagement" activeClassName="bg-gray-700"><MdOutlinePayment />PAYMENT MANAGEMENT</NavLink></li>
-                            <h1 className='text-center border-b border-t border-gray-400 border-dotted text-md bg-slate-100'>GENERAL LEDGER</h1>
-                            <li className='font-semibold'><NavLink to="financialReports" activeClassName="bg-gray-700"><TbReportAnalytics />FINANCIAL REPORTS</NavLink></li>
-                            <li className='font-semibold'><NavLink to="chartOfAccounts" activeClassName="bg-gray-700"><FaChartBar />CHART OF ACCOUNTS</NavLink></li>
-                            <h1 className='text-center border-b border-t border-gray-400 border-dotted text-md bg-slate-100'>USER MANAGEMENT</h1>
-                            <li className='font-semibold'><NavLink to="accountsManagement" activeClassName="bg-gray-700"><MdSupervisorAccount />USER MANAGEMENT</NavLink></li>
+                            {(profile.role === 'Accountant' || profile.role === 'Billing Officer' ) && (
+                                <ul className="menu menu-vertical">
+                                    <h1 className='text-center mt-5 border-b border-t border-gray-400 border-dotted text-md bg-slate-100'>BILLING</h1>
+                                    <li className='font-semibold'><NavLink to="billing" activeClassName="bg-gray-700"><FaMoneyBills />BILLING & INVOICE</NavLink></li>
+                                    <h1 className='text-center border-b border-t border-gray-400 border-dotted text-md bg-slate-100'>FINANCE MANAGEMENT</h1>
+                                    <li className='font-semibold'><NavLink to="budgetManagement" activeClassName="bg-gray-700"><FaMoneyBills />BUDGET MANAGEMENT</NavLink></li>
+                                    <li className='font-semibold'><NavLink to="insuranceClaims" activeClassName="bg-gray-700"><LuBaggageClaim />INSURANCE CLAIMS</NavLink></li>
+                                    <li className='font-semibold'><NavLink to="paymentManagement" activeClassName="bg-gray-700"><MdOutlinePayment />PAYMENT MANAGEMENT</NavLink></li>
+                                </ul>
+                            )}
+                            {(profile.role === 'Medical Director') && (
+                                <ul className="menu menu-vertical">
+                                    <h1 className='text-center mt-5 border-b border-t border-gray-400 border-dotted text-md bg-slate-100'>BILLING</h1>
+                                    <li className='font-semibold'><NavLink to="billing" activeClassName="bg-gray-700"><FaMoneyBills />BILLING & INVOICE</NavLink></li>
+                                    <h1 className='text-center border-b border-t border-gray-400 border-dotted text-md bg-slate-100'>FINANCE MANAGEMENT</h1>
+                                    <li className='font-semibold'><NavLink to="budgetManagement" activeClassName="bg-gray-700"><FaMoneyBills />BUDGET MANAGEMENT</NavLink></li>
+                                    <li className='font-semibold'><NavLink to="insuranceClaims" activeClassName="bg-gray-700"><LuBaggageClaim />INSURANCE CLAIMS</NavLink></li>
+                                    <li className='font-semibold'><NavLink to="paymentManagement" activeClassName="bg-gray-700"><MdOutlinePayment />PAYMENT MANAGEMENT</NavLink></li>
+                                    <h1 className='text-center border-b border-t border-gray-400 border-dotted text-md bg-slate-100'>GENERAL LEDGER</h1>
+                                    <li className='font-semibold'><NavLink to="financialReports" activeClassName="bg-gray-700"><TbReportAnalytics />FINANCIAL REPORTS</NavLink></li>
+                                    <li className='font-semibold'><NavLink to="chartOfAccounts" activeClassName="bg-gray-700"><FaChartBar />CHART OF ACCOUNTS</NavLink></li>
+                                    <h1 className='text-center border-b border-t border-gray-400 border-dotted text-md bg-slate-100'>USER MANAGEMENT</h1>
+                                    <li className='font-semibold'><NavLink to="accountsManagement" activeClassName="bg-gray-700"><MdSupervisorAccount />USER MANAGEMENT</NavLink></li>
+                                </ul>
+                            )}
                         </ul>
                     </div>
                 </div>
