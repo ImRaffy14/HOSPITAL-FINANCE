@@ -80,7 +80,7 @@ function AdminPage() {
         <>
             <div className="h-screen flex">
                 {/* Sidebar */}
-                <div className={`sidebar transition-all duration-300 ${isToggled ? 'w-6/12 lg:w-2/12 md:w-4/12 sm:w-4/12' : 'w-0'} overflow-auto`}>
+                <div className={`sidebar transition-all duration-300 ${isToggled ? 'w-6/12 md:w-3/12 sm:w-3/12 lg:w-3/12 xl:w-2/12' : 'w-0'} overflow-auto`}>
                     <div className="flex flex-col justify-center my-4">
                         <div className='flex flex-col items-center'>
                             <img src={Logo} className='h-[150px] w-[150px] mt-10' />
@@ -96,7 +96,6 @@ function AdminPage() {
                                     <h1 className='text-center border-b border-t border-gray-400 border-dotted text-md bg-slate-100'>FINANCE MANAGEMENT</h1>
                                     <li className='font-semibold'><NavLink to="budgetManagement" activeClassName="bg-gray-700"><FaMoneyBills />BUDGET MANAGEMENT</NavLink></li>
                                     <li className='font-semibold'><NavLink to="insuranceClaims" activeClassName="bg-gray-700"><LuBaggageClaim />INSURANCE CLAIMS</NavLink></li>
-                                    <li className='font-semibold'><NavLink to="paymentManagement" activeClassName="bg-gray-700"><MdOutlinePayment />PAYMENT MANAGEMENT</NavLink></li>
                                 </ul>
                             )}
                             {(profile.role === 'Medical Director') && (

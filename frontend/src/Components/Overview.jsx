@@ -21,7 +21,7 @@ function Overview({userData}) {
           <div className='max-w-screen-2xl mx-auto flex flex-col  mt-10'>
             <h1 className='font-bold text-md'>Dashboard</h1>
               <div className='flex justify-start'>
-                <div className='p-8 rounded-lg bg-white w-[450px] mt-5 shadow-xl'>
+                <div className='p-8 rounded-lg bg-white w-[400px] mt-5 shadow-xl'>
                   <h1 className="flex items-center text-xl"><CiUser className='mr-2 text-3xl'/><a className="font-semibold">{userData.fullName}</a></h1>
                   <h1 className="flex items-center text-md mt-3"><a className="font-semibold mr-2">Account ID:</a> {userData._id}</h1>
                   <h1 className="flex items-center text-md"><a className="font-semibold mr-2">Role:</a> {userData.role}</h1>

@@ -402,7 +402,7 @@ function accountsManagement() {
             <div className="py-4">
               <p><strong>Account ID:</strong> {selectedData._id}</p>
               <p><strong>Username:</strong> {selectedData.username}</p>
-              <p><strong>Full Name Type:</strong> {selectedData.fullName}</p>
+              <p><strong>Full Name:</strong> {selectedData.fullName}</p>
               <p><strong>Email:</strong> {selectedData.email}</p>
               <p><strong>Role:</strong> {selectedData.role}</p>
               <p><strong>Contact Number:</strong> {selectedData.contactNumber}</p>
