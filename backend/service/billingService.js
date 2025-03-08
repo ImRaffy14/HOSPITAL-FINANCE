@@ -16,3 +16,14 @@ exports.newBilling = async (data) => {
         throw new Error('Error Adding Billing Records');
     }
 }
+
+// UPDATE BILLING RECORD
+exports.updateBilling = async (id, data) => {
+    try {
+        const updatedBilling = await billingRecords.findByIdAndUpdate(id, data, { new: true });
+        return updatedBilling;
+    } catch (error) {
+        console.error('Error updating Billing Record: ', error.message);
+        throw new Error('Data not found');
+    }
+}

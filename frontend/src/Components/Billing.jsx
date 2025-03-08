@@ -8,6 +8,7 @@ import { useSocket } from "../context/socketContext";
 import axios from "axios";
 import { FaEye, FaEdit } from "react-icons/fa";
 import BillingModalPdf from "../Components/modal/BillingModalPdf"
+import ConfirmationModal from "../Components/modal/confirmationModal"
 
 
 function Billing() {
@@ -119,8 +120,13 @@ function Billing() {
         setData((prevData) => [response, ...prevData]);
       })
 
+      socket.on('update-billing', (response) => {
+        setData((prevData) => prevData.map((items) => items._id === response._id ? response : items))
+      })
+
       return () => {
         socket.off('new-billing')
+        socket.off('update-billing')
       }
     }, [])
   
@@ -150,6 +156,32 @@ function Billing() {
       setBillingData({ ...billingData, [type]: updatedItems });
     };
 
+    // Handle input changes edit
+    const editHandleInputChange = (type, index, event) => {
+      const { name, value } = event.target;
+      if (type === "patient") {
+        setSelectedData({ ...selectedData, [name]: value });
+      } else {
+        const updatedItems = [...selectedData[type]];
+        updatedItems[index][name] = value;
+        setSelectedData({ ...selectedData, [type]: updatedItems });
+      }
+    };
+
+    // Add service or medication edit
+    const editAddItem = (type) => {
+      setSelectedData({
+        ...selectedData,
+        [type]: [...selectedData[type], { name: "", cost: "" }],
+      });
+    };
+
+    // Remove service or medication edit
+    const editRemoveItem = (type, index) => {
+      const updatedItems = selectedData[type].filter((_, i) => i !== index);
+      setSelectedData({ ...selectedData, [type]: updatedItems });
+    };
+
     // Calculate subtotal
     const calculateSubtotal = () => {
       return (
@@ -160,9 +192,24 @@ function Billing() {
 
     // Calculate tax
     const calculateTax = () => (calculateSubtotal() * billingData.doctorTax) / 100;
-
+    
     // Calculate total with tax
     const calculateTotal = () => calculateSubtotal() - calculateTax();
+
+
+    // Calculate subtotal edit
+    const editCalculateSubtotal = () => {
+      return (
+        selectedData.services.reduce((acc, item) => acc + Number(item.cost || 0), 0) +
+        selectedData.medications.reduce((acc, item) => acc + Number(item.cost || 0), 0)
+      );
+    };
+
+    // Calculate tax
+    const editCalculateTax = () => (editCalculateSubtotal() * selectedData.doctorTax) / 100;
+    
+    // Calculate total with tax
+    const editCalculateTotal = () => editCalculateSubtotal() - editCalculateTax();
 
     // Review billing before submitting
     const handleReviewBilling = (event) => {
@@ -222,6 +269,32 @@ function Billing() {
       }
     }
 
+    // SUBMIT EDIT
+    const onSubmitEdit = async () => {
+      try {
+        const data = {
+          ...selectedData,
+          totalAmount: editCalculateTotal(),
+        }
+        const result = await axios.patch(`${urlAPI}/billing/update-billing/${selectedData._id}`, data)
+        if(result.data.status === 'success'){
+          toast.success('Billing record updated successfully', {
+            position: 'top-right'
+          })
+        }
+      } catch (error) {
+        if(error.response.data.status === "error"){
+          toast.error(error.response.data.message, {
+            position: 'top-right'
+          })
+          
+        }else{
+          toast.error('An error occurred. Please try again later.', {
+            position: 'top-right'
+          })
+        }
+      }
+    }
 
   return (
     <div>
@@ -398,6 +471,159 @@ function Billing() {
           </div>
         </dialog>
 
+        {/* EDIT BILLING */}
+        <dialog id="edit-billing-modal" className="modal">
+          <div className="modal-box">
+            <h3 className="font-semibold text-lg mb-4">Edit Billing</h3>
+
+        
+            <form method="dialog" className="space-y-4" onSubmit={ () => document.getElementById('confirm-modal').showModal()}>
+              {/* Patient Info */}
+              <div>
+                <label className="block font-medium">Patient Name</label>
+                <input
+                  type="text"
+                  name="patientName"
+                  placeholder="Enter patient name"
+                  value={selectedData?.patientName}
+                  onChange={(e) => editHandleInputChange("patient", null, e)}
+                  className="input input-bordered w-full"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block font-medium">Patient Age</label>
+                <input
+                  type="number"
+                  name="patientAge"
+                  placeholder="Enter patient age"
+                  value={selectedData?.patientAge}
+                  onChange={(e) => editHandleInputChange("patient", null, e)}
+                  className="input input-bordered w-full"
+                  max={100}
+                  min={1}
+                  required
+                />
+              </div>
+
+              {/* Services Section */}
+              <div>
+                <label className="block font-medium">Services Provided</label>
+                {selectedData?.services.map((service, index) => (
+                  <div key={index} className="flex gap-2 mt-2 items-center">
+                    <input
+                      type="text"
+                      name="name"
+                      placeholder="Service Name"
+                      value={service.name}
+                      onChange={(e) => editHandleInputChange("services", index, e)}
+                      className="input input-bordered w-1/2"
+                      required
+                    />
+                    <input
+                      type="number"
+                      name="cost"
+                      placeholder="Cost"
+                      value={service.cost}
+                      onChange={(e) => editHandleInputChange("services", index, e)}
+                      className="input input-bordered w-1/2"
+                      required
+                    />
+                    <button type="button" className="btn btn-sm btn-error" onClick={() => editRemoveItem("services", index)}>
+                      <IoMdClose />
+                    </button>
+                  </div>
+                ))}
+                <button type="button" className="btn btn-outline btn-primary mt-2" onClick={() => editAddItem("services")}>
+                  + Add Service
+                </button>
+              </div>
+
+              {/* Medications Section */}
+              <div>
+                <label className="block font-medium">Medications</label>
+                {selectedData?.medications.map((medication, index) => (
+                  <div key={index} className="flex gap-2 mt-2 items-center">
+                    <input
+                      type="text"
+                      name="name"
+                      placeholder="Medication Name"
+                      value={medication.name}
+                      onChange={(e) => editHandleInputChange("medications", index, e)}
+                      className="input input-bordered w-1/2"
+                      required
+                    />
+                    <input
+                      type="number"
+                      name="cost"
+                      placeholder="Cost"
+                      value={medication.cost}
+                      onChange={(e) => editHandleInputChange("medications", index, e)}
+                      className="input input-bordered w-1/2"
+                      required
+                    />
+                    <button type="button" className="btn btn-sm btn-error" onClick={() => editRemoveItem("medications", index)}>
+                      <IoMdClose />
+                    </button>
+                  </div>
+                ))}
+                <button type="button" className="btn btn-outline btn-primary mt-2" onClick={() => editAddItem("medications")}>
+                  + Add Medication
+                </button>
+              </div>
+
+             {/* STATUS */}
+              <label className="block font-semibold mb-2">Payment Status</label>
+              <div className="flex gap-4">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="paymentStatus"
+                    value="Pending"
+                    checked={selectedData?.paymentStatus === "Pending"}
+                    onChange={(e) => editHandleInputChange("patient", null, e)}
+                    className="radio"
+                  />
+                  Pending
+                </label>
+
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="paymentStatus"
+                    value="Paid"
+                    checked={selectedData?.paymentStatus === "Paid"}
+                    onChange={(e) => editHandleInputChange("patient", null, e)}
+                    className="radio"
+                  />
+                  Paid
+                </label>
+              </div>
+
+              {/* Doctor's Tax */}
+              <div>
+                <label className="block font-medium">Doctor's Tax (%)</label>
+                <input
+                  type="number"
+                  className="input input-bordered w-full"
+                  value={selectedData?.doctorTax}
+                  onChange={(e) => setSelectedData({ ...selectedData, doctorTax: e.target.value })}
+                  required
+                />
+              </div>
+
+              {/* Review & Submit Buttons */}
+              <div className="modal-action">
+                <button type="submit" className="btn btn-success">Save</button>
+                <button type="button" className="btn btn-error" onClick={() => document.getElementById('edit-billing-modal').close()}>
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </dialog>
+
         {/* VIEW MODAL */}
         <dialog id="view-modal" className="modal">
           <div className="modal-box">
@@ -429,6 +655,8 @@ function Billing() {
         {isDownload && 
         <BillingModalPdf selectedData={selectedData} onClose={() => setIsDownload(false) } />
         }
+
+        <ConfirmationModal onConfirm={onSubmitEdit} header={`Update Changes`} text={'Are you sure you want to update this record?'} />
     </div>
     
   )

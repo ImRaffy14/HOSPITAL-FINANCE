@@ -17,3 +17,7 @@ Accept: application/json
 ## GET BILLINGS
 ###
 GET http://localhost:8056/billing/get-billings
+
+# UPDATE BILLING
+###
+PATCH http://localhost:8056/billing/update-billing/09232
