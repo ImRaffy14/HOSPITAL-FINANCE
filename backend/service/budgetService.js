@@ -16,3 +16,14 @@ exports.addRequest = async (data) => {
         throw new Error(`Error Adding Budget Request`)
     }
 }
+
+// UPDATE BUDGET REQUEST
+exports.updateRequest = async (id, data) => {
+    try {
+        const result = await budgetRequestRecords.findByIdAndUpdate(id, data, { new: true })
+        return result;
+    } catch (error) {
+        console.error(`Error Updating Budget Request: ${error.message}`);
+        throw new Error(`Request is not found`)
+    }
+}

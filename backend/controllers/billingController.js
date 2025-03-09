@@ -36,9 +36,6 @@ exports.updateBilling = async (req, res) => {
         })
         req.io.emit('update-billing', updatedBilling);
     } catch (error) {
-        res.status(404).json({
-            status: 'error',
-            message: error.message
-        })   
+        res.status(error.status || 500).json({ status: "error", message: error.message || "Internal Server Error" }); 
     }
 }

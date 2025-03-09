@@ -52,7 +52,7 @@ function budgetManagement() {
         button: true,
         width: '40px'
       },
-      { name: 'Edit', 
+      { name: 'Update', 
       cell: (row) => (
         <div className='flex justify-center text-lg bg-green-500 h-10 w-10 rounded-lg items-center transition-transform transform hover:scale-105 hover:shadow-xl cursor-pointer'
         onClick={()=> { document.getElementById('edit-modal').showModal(); setSelectedData(row)}}>
@@ -94,8 +94,14 @@ function budgetManagement() {
       setData((prevData) => [response, ...prevData])
     })
 
+    socket.on('update-request', (response) => {
+      setData((prevData) => prevData.map((item) => 
+        item._id === response._id ? response : item))
+    })
+
     return () => {
       socket.off('added-request')
+      socket.off('update-request')
     }
   }, [])
 
@@ -139,6 +145,34 @@ function budgetManagement() {
         setDepartment('')
         setBudgetType('')
         setDescription('')
+        toast.error('An error occurred', {
+          position: "top-right",
+        })
+      }
+    }
+  }
+
+  // HANDLE UPDATE SUBMIT
+  const updateSubmit = async (e) => {
+    e.preventDefault()
+    try {
+      const response = await axios.patch(`${urlAPI}/budget/update-request/${selectedData._id}`,
+        selectedData
+      )
+      if(response.data.status === 'success'){
+        document.getElementById("edit-modal").close()
+        toast.success(response.data.message, {
+          position: "top-right",
+        })
+      }
+    } catch (error) {
+      if(error.response.data.status){
+        document.getElementById("edit-modal").close()
+        toast.error(error.response.data.message, {
+          position: "top-right",
+        })
+      }else{
+        document.getElementById("edit-modal").close()
         toast.error('An error occurred', {
           position: "top-right",
         })
@@ -254,7 +288,7 @@ function budgetManagement() {
           <dialog id="edit-modal" className="modal">
             <div className="modal-box">
               <h3 className="font-bold text-lg mb-5">Record New Budget</h3>
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={updateSubmit} className="space-y-4">
                 {/* Department Field */}
                 <div>
                   <label htmlFor="department" className="block text-sm font-medium">
@@ -388,7 +422,7 @@ function budgetManagement() {
                       }))}
                       className="radio"
                     />
-                    Approved
+                    Rejected
                   </label>
                 </div>
 

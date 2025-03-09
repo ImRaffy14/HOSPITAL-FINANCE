@@ -1,4 +1,5 @@
 const billingRecords = require('../models/billingModel');
+const financialSummaryRecords = require('../models/financialSummaryModel')
 
 // GET ALL BILLING RECORDS
 exports.getBillings = async () => {
@@ -17,13 +18,48 @@ exports.newBilling = async (data) => {
     }
 }
 
-// UPDATE BILLING RECORD
 exports.updateBilling = async (id, data) => {
     try {
+        const checkBill = await billingRecords.findById(id);
+        if (!checkBill) {
+            const error = new Error("Billing record not found");
+            error.status = 404;
+            throw error;
+        }
+
+        if (checkBill.paymentStatus === "Paid") {
+            const error = new Error("This Billing is Already Processed");
+            error.status = 400;
+            throw error;
+        }
+
         const updatedBilling = await billingRecords.findByIdAndUpdate(id, data, { new: true });
+        
+        if (updatedBilling.paymentStatus === "Paid") {
+            let fetchTotalCash = await financialSummaryRecords.findOne({});
+
+            if (fetchTotalCash) {
+                let totalCash = fetchTotalCash.totalCash || 0;
+                await financialSummaryRecords.findByIdAndUpdate(
+                    fetchTotalCash._id,
+                    { totalCash: totalCash + updatedBilling.totalAmount },
+                    { new: true }
+                );
+            } else {
+                await financialSummaryRecords.create({
+                    totalCash: data.totalAmount,
+                    operatingExpenses: 0,
+                    staffAndWages: 0,
+                    medicalSupplies: 0,
+                    medicalEquipments: 0,
+                    insuranceClaims: 0
+                });
+            }
+        }
+
         return updatedBilling;
     } catch (error) {
-        console.error('Error updating Billing Record: ', error.message);
-        throw new Error('Data not found');
+        error.status = error.status || 500;
+        throw error;
     }
-}
+};

@@ -103,9 +103,9 @@ function AdminPage() {
                                     <h1 className='text-center mt-2 border-b border-t border-gray-400 border-dotted text-md bg-slate-100'>BILLING</h1>
                                     <li className='font-semibold'><NavLink to="billing" activeClassName="bg-gray-700"><FaMoneyBills />BILLING & INVOICE</NavLink></li>
                                     <h1 className='text-center border-b border-t border-gray-400 border-dotted text-md bg-slate-100'>FINANCE MANAGEMENT</h1>
+                                    <li className='font-semibold'><NavLink to="paymentManagement" activeClassName="bg-gray-700"><MdOutlinePayment />CASH MANAGEMENT</NavLink></li>
                                     <li className='font-semibold'><NavLink to="budgetManagement" activeClassName="bg-gray-700"><FaMoneyBills />BUDGET MANAGEMENT</NavLink></li>
                                     <li className='font-semibold'><NavLink to="insuranceClaims" activeClassName="bg-gray-700"><LuBaggageClaim />INSURANCE CLAIMS</NavLink></li>
-                                    <li className='font-semibold'><NavLink to="paymentManagement" activeClassName="bg-gray-700"><MdOutlinePayment />PAYMENT MANAGEMENT</NavLink></li>
                                     <h1 className='text-center border-b border-t border-gray-400 border-dotted text-md bg-slate-100'>GENERAL LEDGER</h1>
                                     <li className='font-semibold'><NavLink to="financialReports" activeClassName="bg-gray-700"><TbReportAnalytics />FINANCIAL REPORTS</NavLink></li>
                                     <li className='font-semibold'><NavLink to="chartOfAccounts" activeClassName="bg-gray-700"><FaChartBar />CHART OF ACCOUNTS</NavLink></li>
@@ -141,7 +141,7 @@ function AdminPage() {
                             <Route path="overview" element={<Overview userData={profile}/>} />
                             <Route path="budgetManagement" element={<BudgetManagement/>} />
                             <Route path="insuranceClaims" element={<InsuranceClaims/>} />
-                            <Route path="paymentManagement" element={<PaymentManagement/>} />
+                            <Route path="paymentManagement" element={<PaymentManagement userData={profile}/>} />
                             <Route path="financialReports" element={<FinancialReports/>} />
                             <Route path="chartOfAccounts" element={<ChartOfAccounts/>} />
                             <Route path="billing" element={<Billing />} />

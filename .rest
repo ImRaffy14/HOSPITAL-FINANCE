@@ -29,3 +29,12 @@ POST http://localhost:8056/budget/add-request
 ## GET ALL BUDGET REQUESTS
 ###
 GET http://localhost:8056/budget/get-requests
+
+## UPDATE BUDGET REQUEST
+###
+PATCH http://localhost:8056/budget/update-request/67ccab0a6e1b75fcf8594528
+Content-Type: application/json
+
+{
+    "status": "Approved"
+}

@@ -29,3 +29,20 @@ exports.addRequest = async (req, res) => {
         })
     }
 }
+
+// UPDATE BUDGET REQUEST
+exports.updateRequest = async (req, res) => {
+    try {
+        const updateData = await budgetService.updateRequest(req.params.id, req.body)
+        res.status(200).json({
+            status: 'success',
+            message: `Budget Request for ${updateData._id} is now updated`
+        })
+        req.io.emit('update-request', updateData)
+    } catch (error) {
+        res.status(404).json({
+            status: 'error',
+            message: error.message
+        })
+    }
+}
