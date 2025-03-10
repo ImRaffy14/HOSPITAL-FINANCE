@@ -33,16 +33,13 @@ exports.addRequest = async (req, res) => {
 // UPDATE BUDGET REQUEST
 exports.updateRequest = async (req, res) => {
     try {
-        const updateData = await budgetService.updateRequest(req.params.id, req.body)
+        const updateData = await budgetService.updateRequest(req.params.id, req.body, req)
         res.status(200).json({
             status: 'success',
             message: `Budget Request for ${updateData._id} is now updated`
         })
         req.io.emit('update-request', updateData)
     } catch (error) {
-        res.status(404).json({
-            status: 'error',
-            message: error.message
-        })
+        res.status(error.status || 500).json({ status: "error", message: error.message || "Internal Server Error" });
     }
 }

@@ -33,7 +33,6 @@ exports.getBudgetHistory = async () => {
     }
 }
 
-
 // ADD NEW BUDGET ALLOCATION
 exports.addAllocation = async (data, req) => {
     try {

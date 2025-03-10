@@ -1,4 +1,5 @@
 const budgetRequestRecords = require('../models/budgetRecordsModel')
+const financialSummaryRecords = require('../models/financialSummaryModel')
 
 // GET ALL BUDGET REQUEST RECORDS
 exports.getRequest = async () => {
@@ -18,12 +19,44 @@ exports.addRequest = async (data) => {
 }
 
 // UPDATE BUDGET REQUEST
-exports.updateRequest = async (id, data) => {
+exports.updateRequest = async (id, data, req) => {
     try {
+        const budgetField = {
+            "Operating Expenses": "operatingExpenses",
+            "Medical Supplies": "medicalSupplies",
+            "Medical Equipments": "medicalEquipments",
+            "Staff and Wages": "staffAndWages",
+            "Insurance Claims": "insuranceClaims"
+        }[data.budgetType];
+
+        const checkRequest = await budgetRequestRecords.findById(id)
+        if(checkRequest.status === 'Approved' || checkRequest.status === 'Rejected'){
+            const error = new Error('This Request is already processed')
+            error.status = 400;
+            throw error;
+        }
+        if(data.status === 'Approved'){
+            const summary = await financialSummaryRecords.findOne({})
+            const allocated = summary[budgetField]
+            if(data.amount >= allocated){
+                const error = new Error('No enough budget for this request')
+                error.status = 400
+                throw error;
+            }
+        }
         const result = await budgetRequestRecords.findByIdAndUpdate(id, data, { new: true })
+        if(result.status === "Approved"){
+            const summary = await financialSummaryRecords.findOneAndUpdate(
+                {},
+                { $inc: { [budgetField]: -result.amount }},
+                {new: true}
+            )
+            req.io.emit('allocations', summary)
+        }
         return result;
     } catch (error) {
         console.error(`Error Updating Budget Request: ${error.message}`);
-        throw new Error(`Request is not found`)
+        error.status = error.status || 500;
+        throw error;
     }
 }

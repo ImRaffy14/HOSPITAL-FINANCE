@@ -4,17 +4,21 @@ import DataTable from 'react-data-table-component';
 import { MdAddToPhotos } from "react-icons/md";
 import { PiMoneyFill } from "react-icons/pi";
 import { useSocket } from '../context/socketContext'
+import { MdAddComment } from "react-icons/md";
+import axios from "axios"
+import { toast } from "react-toastify"
 
 function insuranceClaims() {
 
   const [searchText, setSearchText] = useState('')
-  const [claimDate, setClaimDate] = useState('');
+  const [insuranceBudget, setInsuranceBudget] = useState(0)
   const [claimAmount, setClaimAmount] = useState('');
   const [claimType, setClaimType] = useState('');
   const [description, setDescription] = useState('');
   const [data, setData] = useState([])
 
   const socket = useSocket()
+  const urlAPI = import.meta.env.VITE_API_URL
 
   const formatCurrency = (value) => {
     if (value === undefined || value === null) {
@@ -43,47 +47,64 @@ function insuranceClaims() {
   );
 
   useEffect(() => {
-    if(!socket) return;
 
-    socket.emit('get-insurance-record', {msg: 'get insurance records'})
-
-    const handlesNewInsurance = (response) => {
-      alert(response.msg)
+    //FETCH DATA
+    const fetchData = async () => {
+      const response = await axios.get(`${urlAPI}/insurance/claims-history`)
+      setData(response.data)
+      const insurance = await axios.get(`${urlAPI}/cash/get-allocations`)
+      setInsuranceBudget(insurance.data.allocations.insuranceClaims)
     }
 
-    const handlesInsuranceRecords = (response) => {
-      setData(response)
-    }
+    fetchData()
 
-    socket.on('received-new-insurance', handlesNewInsurance)
-    socket.on('received-insurance-records', handlesInsuranceRecords)
+    socket.on('insurance-budget', (response) => {
+      setInsuranceBudget(response)
+    })
+
+    socket.on('new-claim', (response) => {
+      setData((prevData) => [response, ...prevData])
+    })
     return () => {
-      socket.off('received-new-insurance')
-      socket.off('received-insurance-records')
+      socket.off('insurance-budget')
+      socket.off('new-claim')
     }
-  }, [socket])
+  }, [])
 
-  const handleClaimSubmit = (e) => {
+  const handleClaimSubmit = async (e) => {
     e.preventDefault();
 
     // Create a new claim object
     const newClaim = {
-      claimDate,
+      claimDate: Date.now(),
       claimAmount,
       claimType,
       description,
     };
 
-    socket.emit('add-new-insurance', newClaim)
+    try {
+      const response = await axios.post(`${urlAPI}/insurance/add-claims`, newClaim);
+      if(response.data.status === 'success'){
+        toast.success(response.data.message, {
+          position: 'top-right'
+        })
 
-    // Clear form fields after submission
-    setClaimDate('');
-    setClaimAmount('');
-    setClaimType('');
-    setDescription('');
+      setClaimAmount('');
+      setClaimType('');
+      setDescription('');
 
-    // Close the modal (if necessary)
-    document.getElementById('insurance_claim_modal').close();
+      document.getElementById('insurance_claim_modal').close();
+      }
+    } catch (error) {
+      toast.error(error.response.data.message, {
+        position: 'top-right'
+      })
+      setClaimAmount('');
+      setClaimType('Machine');
+      setDescription('');
+
+      document.getElementById('insurance_claim_modal').close();
+    }
   };
 
   return (
@@ -99,64 +120,43 @@ function insuranceClaims() {
                   <PiMoneyFill className='text-2xl text-blue-500' />
                 </div>
                 <div className="flex gap-3 my-3">
-                  <p className="text-4xl text-black font-bold">₱ 50,000</p>
+                  <p className="text-3xl text-black font-bold">{formatCurrency(insuranceBudget)}</p>
                 </div>
               </div>
-
-              <div className="bg-white shadow-xl w-[280px] p-5 rounded-lg mt-3 transition-transform transform hover:scale-105 hover:shadow-xl cursor-pointer" onClick={()=>document.getElementById('insurance_claim_modal').showModal()}>
-                <div className="flex items-center justify-between">
-                  <p className="text-gray-600 font-semibold text-md">Add Insurance Claim</p>
-                </div>
-                <div className="flex gap-3 my-3">
-                  <p className="text-4xl text-black font-bold flex"><MdAddToPhotos className='text-4xl text-emerald-500 mr-3' /> Add</p>
-                </div>
-              </div>
-
             </div>
 
             <div className="overflow-x-auto w-full mt-10">
-              <h1 className='mb-4'>Insurance Claims Records</h1>
-              <DataTable
-                title="Insurance Claims Records"
-                columns={columns}
-                data={filteredData}
-                pagination
-                defaultSortField="name"
-                highlightOnHover
-                pointerOnHover
-                subHeader
-                subHeaderComponent={
-                  <input
-                    type="text"
-                    placeholder="Search..."
-                    value={searchText}
-                    onChange={handleSearch}
-                    className="mb-2 p-2 border border-gray-400 rounded-lg"
-                  />
-                }
-              />
+              <button className='btn btn-primary text-md mb-5' onClick={() => document.getElementById('insurance_claim_modal').showModal()}>
+                <MdAddComment className="text-2xl"/> 
+                Add claims
+              </button>
+              <h1 className='mb-2 font-semibold text-md'>Insurance Claims History</h1>
+              <div className="bg-white rounded-lg p-2">
+                  <DataTable
+                      columns={columns}
+                      data={filteredData}
+                      pagination
+                      defaultSortField="name"
+                      highlightOnHover
+                      pointerOnHover
+                      subHeader
+                      subHeaderComponent={
+                        <input
+                        type="text"
+                        placeholder="Search..."
+                        value={searchText}
+                        onChange={handleSearch}
+                        className="mb-2 p-2 border border-gray-400 rounded-lg mt-5"
+                        />
+                      }
+                    />
+                </div>
             </div>
 
             <dialog id="insurance_claim_modal" className="modal">
               <div className="modal-box">
                 <h3 className="font-bold text-lg mb-5">Record New Insurance Claim</h3>
                 <form method="dialog" className="space-y-4" onSubmit={handleClaimSubmit}>
-                  {/* Claim Date Field */}
-                  <div>
-                    <label htmlFor="claimDate" className="block text-sm font-medium">
-                      Claim Date
-                    </label>
-                    <input
-                      type="date"
-                      id="claimDate"
-                      name="claimDate"
-                      className="input input-bordered w-full mt-1"
-                      value={claimDate}
-                      onChange={(e) => setClaimDate(e.target.value)}
-                      required
-                    />
-                  </div>
-
                   {/* Claim Amount Field */}
                   <div>
                     <label htmlFor="claimAmount" className="block text-sm font-medium">
@@ -189,10 +189,9 @@ function insuranceClaims() {
                       <option value="" disabled selected>
                         Select claim type
                       </option>
-                      <option value="Health">Health</option>
-                      <option value="Vehicle">Vehicle</option>
-                      <option value="Home">Home</option>
-                      <option value="Life">Life</option>
+                      <option value="Machine">Machine</option>
+                      <option value="Ambulance">Ambulance</option>
+                      <option value="Equipments">Equipments</option>
                     </select>
                   </div>
 
