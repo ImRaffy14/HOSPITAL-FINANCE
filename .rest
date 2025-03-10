@@ -38,3 +38,19 @@ Content-Type: application/json
 {
     "status": "Approved"
 }
+
+## GET TOTAL CASH
+###
+GET http://localhost:8056/cash/get-total-cash
+
+## GET ALLOCATIONS
+###
+GET http://localhost:8056/cash/get-allocations
+
+## GET BUDGET HISTORY
+###
+GET http://localhost:8056/cash/get-budget-history
+
+## ADD BUDGET ALLOCATION
+###
+POST http://localhost:8056/cash/add-allocation

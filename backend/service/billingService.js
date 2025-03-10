@@ -18,7 +18,7 @@ exports.newBilling = async (data) => {
     }
 }
 
-exports.updateBilling = async (id, data) => {
+exports.updateBilling = async (id, data, req) => {
     try {
         const checkBill = await billingRecords.findById(id);
         if (!checkBill) {
@@ -40,13 +40,14 @@ exports.updateBilling = async (id, data) => {
 
             if (fetchTotalCash) {
                 let totalCash = fetchTotalCash.totalCash || 0;
-                await financialSummaryRecords.findByIdAndUpdate(
+                const result = await financialSummaryRecords.findByIdAndUpdate(
                     fetchTotalCash._id,
                     { totalCash: totalCash + updatedBilling.totalAmount },
                     { new: true }
                 );
+                req.io.emit('total-cash', result.totalCash)
             } else {
-                await financialSummaryRecords.create({
+                const result = await financialSummaryRecords.create({
                     totalCash: data.totalAmount,
                     operatingExpenses: 0,
                     staffAndWages: 0,
@@ -54,6 +55,7 @@ exports.updateBilling = async (id, data) => {
                     medicalEquipments: 0,
                     insuranceClaims: 0
                 });
+                req.io.emit('total-cash', result.totalCash)
             }
         }
 

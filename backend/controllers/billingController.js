@@ -30,7 +30,7 @@ exports.newBilling = async (req, res) => {
 // UPDATE BILLING RECORD
 exports.updateBilling = async (req, res) => {
     try {
-        const updatedBilling = await billingService.updateBilling(req.params.id, req.body);
+        const updatedBilling = await billingService.updateBilling(req.params.id, req.body, req);
         res.status(200).json({
             status: 'success',
         })

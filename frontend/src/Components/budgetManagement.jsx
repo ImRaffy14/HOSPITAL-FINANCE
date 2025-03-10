@@ -21,6 +21,12 @@ function budgetManagement() {
   const [status, setStatus] = useState("")
   const [selectedData, setSelectedData] = useState([])
   const [data, setData] = useState([])
+  const [allocation, setAllocation] = useState({
+    operatingExpenses: 0,
+    staffAndWages: 0,
+    medicalSupplies: 0,
+    medicalEquipments: 0
+  })
 
   const socket = useSocket()
   const urlAPI = import.meta.env.VITE_API_URL
@@ -85,6 +91,14 @@ function budgetManagement() {
       const response = await axios.get(`${urlAPI}/budget/get-requests`)
         if(response.data.status === 'success'){
           setData(response.data.requests)
+          const getAllocations = await axios.get(`${urlAPI}/cash/get-allocations`)
+          setAllocation((prevData) => ({
+            ...prevData,
+            operatingExpenses: getAllocations.data.allocations.operatingExpenses,
+            staffAndWages: getAllocations.data.allocations.staffAndWages,
+            medicalSupplies: getAllocations.data.allocations.medicalSupplies,
+            medicalEquipments: getAllocations.data.allocations.medicalEquipments,
+          }))
         }
       }
 
@@ -97,6 +111,16 @@ function budgetManagement() {
     socket.on('update-request', (response) => {
       setData((prevData) => prevData.map((item) => 
         item._id === response._id ? response : item))
+    })
+
+    socket.on('allocations', (response) => {
+      setAllocation((prevData) => ({
+        ...prevData,
+        operatingExpenses: response.operatingExpenses,
+        staffAndWages: response.staffAndWages,
+        medicalSupplies: response.medicalSupplies,
+        medicalEquipments: response.medicalEquipments
+      }))
     })
 
     return () => {
@@ -196,7 +220,7 @@ function budgetManagement() {
                   <LuUtilityPole className='text-2xl text-yellow-500' />
                 </div>
                 <div className="flex gap-3 my-3">
-                  <p className="text-3xl text-black font-bold">₱ 50,000</p>
+                  <p className="text-3xl text-black font-bold">{formatCurrency(allocation.operatingExpenses)}</p>
                 </div>
               </div>
 
@@ -206,7 +230,7 @@ function budgetManagement() {
                   <FaPeopleGroup className='text-2xl text-blue-500' />
                 </div>
                 <div className="flex gap-3 my-3">
-                  <p className="text-3xl text-black font-bold">₱ 50,000</p>
+                  <p className="text-3xl text-black font-bold">{formatCurrency(allocation.staffAndWages)}</p>
                 </div>
               </div>
 
@@ -216,7 +240,7 @@ function budgetManagement() {
                   <FaBriefcaseMedical className='text-2xl text-red-500' />
                 </div>
                 <div className="flex gap-3 my-3">
-                  <p className="text-3xl text-black font-bold">₱ 100,000</p>
+                  <p className="text-3xl text-black font-bold">{formatCurrency(allocation.medicalSupplies)}</p>
                 </div>
               </div>
 
@@ -226,7 +250,7 @@ function budgetManagement() {
                   <GiMedicalDrip className='text-2xl text-emerald-500' />
                 </div>
                 <div className="flex gap-3 my-3">
-                  <p className="text-3xl text-black font-bold">₱ 100,520</p>
+                  <p className="text-3xl text-black font-bold">{formatCurrency(allocation.medicalEquipments)}</p>
                 </div>
               </div>
             </div>

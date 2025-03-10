@@ -1,15 +1,24 @@
 import React from 'react'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import DataTable from 'react-data-table-component';
 import { FaPeopleGroup } from "react-icons/fa6";
 import { GrMoney } from "react-icons/gr";
 import { MdAddToPhotos } from "react-icons/md";
+import { useSocket } from "../context/socketContext"
+import { toast } from 'react-toastify';
+import axios from "axios"
 
 function paymentManagement({userData}) {
 
   const [searchText, setSearchText] = useState('')
   const [data, setData] = useState([])
+  const [totalCash, setTotalCash] = useState(0)
+  const [amount, setAmount] = useState(0)
+  const [budgetType, setBudgetType] = useState('')
 
+  const socket = useSocket()
+  const urlAPI = import.meta.env.VITE_API_URL
+  
   const formatCurrency = (value) => {
     if (value === undefined || value === null) {
       return `₱0.00`; 
@@ -18,10 +27,10 @@ function paymentManagement({userData}) {
   };
 
   const columns = [
-    { name: 'Payment ID', selector: row => row.paymentId },
-    { name: 'Payment Date', selector: row => row.paymentDate },
-    { name: 'Payment Amount', selector: row => formatCurrency(row.paymentAmount) },
-    { name: 'Payment Method', selector: row => row.paymentMethod },
+    { name: 'Officer ID', selector: row => row.officerId },
+    { name: 'Officer', selector: row => row.officer },
+    { name: 'Budget Type', selector: row => row.budgetType },
+    { name: 'Amount', selector: row => formatCurrency(row.amount) },
   ];
   
 
@@ -35,6 +44,71 @@ function paymentManagement({userData}) {
     )
   );
 
+  useEffect(() => {
+    
+    // FETCH DATA
+    const fetchData = async () => {
+      const response = await axios.get(`${urlAPI}/cash/get-total-cash`)
+      if(response.data.status === "success"){
+        setTotalCash(response.data.totalCash)
+        const history = await axios.get(`${urlAPI}/cash/get-budget-history`)
+        setData(history.data)
+      }
+    }
+
+    fetchData()
+
+    socket.on('total-cash', (response) => {
+      setTotalCash(response)
+    })
+
+    socket.on('budgeting', (response) => {
+      setData((prevData) => [response, ...prevData])
+    })
+
+    return () => {
+      socket.off('total-cash')
+    }
+  }, [])
+
+  // SUBMIT NEW ALLOCATION
+  const submitAllocation = async (e) => {
+    e.preventDefault();
+    const data = {
+      officerId: userData._id,
+      officer: userData.username,
+      budgetType,
+      amount
+    }
+    
+    try {
+        const response = await axios.post(`${urlAPI}/cash/add-allocation`, data)
+        if(response.data.status === 'success'){
+          document.getElementById('add-modal').close()
+          setBudgetType('')
+          setAmount(0)
+          toast.success(response.data.message, {
+            position: "top-right",
+          })
+        }
+    } catch (error) {
+      if(error.response.data.status === 'error'){
+        document.getElementById('add-modal').close()
+        setBudgetType('')
+        setAmount(0)
+        toast.error(error.response.data.message, {
+          position: "top-right",
+        })
+      }else{
+        document.getElementById('add-modal').close()
+        setBudgetType('')
+        setAmount(0)
+        toast.error('An Internal Error', {
+          position: "top-right",
+        })
+      }
+    }
+  }
 
   return (
     <div>
@@ -49,7 +123,7 @@ function paymentManagement({userData}) {
                 <GrMoney className='text-2xl text-yellow-500' />
               </div>
               <div className="flex gap-3 my-3">
-                <p className="text-3xl text-black font-bold">₱ 500,000</p>
+                <p className="text-3xl text-black font-bold">{formatCurrency(totalCash)}</p>
               </div>
             </div>
           </div>
@@ -85,16 +159,22 @@ function paymentManagement({userData}) {
       <dialog id="add-modal" className="modal">
         <div className="modal-box">
           <h3 className="font-semibold text-lg mb-4">Add Budget</h3>
-          <form method="dialog" className="space-y-4">
+          <form method="dialog" className="space-y-4" onSubmit={submitAllocation}>
             {/* Budget Type (Dropdown) */}
             <div>
               <label className="block text-sm font-medium mb-1">Budget Type</label>
-              <select className="select select-bordered w-full" required>
+              <select
+              className="select select-bordered w-full"
+              value={budgetType}
+              onChange={(e) => setBudgetType(e.target.value)}
+              required
+              >
                 <option value="" disabled selected>Select Budget Type</option>
                 <option value="Operating Expenses">Operating Expenses</option>
                 <option value="Medical Supplies">Medical Supplies</option>
                 <option value="Medical Equipments">Medical Equipments</option>
                 <option value="Staff and Wages">Staff and Wages</option>
+                <option value="Insurance Claims">Insurance Claims</option>
               </select>
             </div>
 
@@ -104,6 +184,10 @@ function paymentManagement({userData}) {
               <input
                 type="number"
                 placeholder="Enter amount"
+                max={500000}
+                min={1}
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
                 className="input input-bordered w-full"
                 required
               />

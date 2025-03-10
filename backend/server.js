@@ -13,6 +13,7 @@ const insuranceClaimSocket = require('./controllers/insuranceClaimsSocketControl
 const accountRoutes = require('./routes/accountRoutes')
 const billingRoutes = require('./routes/billingRoute')
 const budgetRoutes = require('./routes/budgetRoutes')
+const cashManageRoute = require('./routes/cashManageRoute')
 
 
 //Middlewares
@@ -47,6 +48,7 @@ app.use('/auth-api', authRoutes);
 app.use('/accounts', accountRoutes);
 app.use('/billing', billingRoutes);
 app.use('/budget', budgetRoutes)
+app.use('/cash', cashManageRoute)
 
 
 // Connect to MongoDB
