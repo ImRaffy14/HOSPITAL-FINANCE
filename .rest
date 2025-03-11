@@ -58,3 +58,7 @@ POST http://localhost:8056/cash/add-allocation
 ## GET INSURANCE
 ###
 GET http://localhost:8056/insurance/claims-history
+
+## GET CHART OF ACCOUNTS
+###
+GET http://localhost:8056/financial/chart-of-accounts
