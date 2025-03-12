@@ -75,6 +75,29 @@ function AdminPage() {
         );
     }
 
+    const dummyData = {
+        liabilites: {
+            operatingExpenses: 5000,
+            medicalSupplies: 2000,
+            medicalEquipments: 8000,
+            staffAndWages: 15000,
+        },
+        revenue: 500000, // Total revenue generated
+        expenses: {
+            operatingExpenses: 12000,
+            medicalSupplies: 8000,
+            medicalEquipments: 10000,
+            staffAndWages: 25000,
+        },
+        assets: {
+            totalAssets: 450000, // Total hospital assets
+            receivables: 25000, // Outstanding payments to be received
+        },
+        equity: {
+            totalEquity: 400000, // Hospital's net worth
+        },
+        };
+        
 
     return (
         <>
@@ -142,7 +165,7 @@ function AdminPage() {
                             <Route path="budgetManagement" element={<BudgetManagement/>} />
                             <Route path="insuranceClaims" element={<InsuranceClaims/>} />
                             <Route path="paymentManagement" element={<PaymentManagement userData={profile}/>} />
-                            <Route path="financialReports" element={<FinancialReports/>} />
+                            <Route path="financialReports" element={<FinancialReports data={dummyData}/>} />
                             <Route path="chartOfAccounts" element={<ChartOfAccounts/>} />
                             <Route path="billing" element={<Billing />} />
                         </Routes>

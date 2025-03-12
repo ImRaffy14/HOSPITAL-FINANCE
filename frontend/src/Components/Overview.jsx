@@ -1,27 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CiUser } from "react-icons/ci";
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend } from "recharts";
+import axios from "axios"
+
 
 function Overview({ userData }) {
-  const [financialData] = useState({
-    totalCash: 500000,
-    totalRevenues: 1500000,
-    totalExpenses: 1000000
-  });
+  const [data , setData] = useState([])
+
+  const urlAPI = import.meta.env.VITE_API_URL
 
   const formatCurrency = (value) => {
     return `₱${(value || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
   };
 
-  // Simulated Cash Flow Data (Example: Last 6 months)
-  const chartData = [
-    { month: "Oct", cashFlow: 450000 },
-    { month: "Nov", cashFlow: 480000 },
-    { month: "Dec", cashFlow: 510000 },
-    { month: "Jan", cashFlow: 530000 },
-    { month: "Feb", cashFlow: 500000 },
-    { month: "Mar", cashFlow: 550000 }
-  ];
+  const chartData = data.cashFlow && data.cashFlow.length > 0 
+  ? data.cashFlow.map(entry => ({
+      month: new Date(entry.updatedAt).toLocaleDateString('en-US', { 
+          month: '2-digit', 
+          day: '2-digit', 
+          year: '2-digit' 
+      }),
+      cashFlow: entry.totalAmount
+    }))
+  : [{ month: '', cashFlow: 0 }]; 
+
+
+  console.log(data.cashFlow)
+  // FETCH DATA
+  useEffect(() => {
+    
+    const fetchData = async () => {
+      const response = await axios.get(`${urlAPI}/financial/analytics`)
+      setData(response.data)
+    }
+
+    fetchData()
+
+  }, [])
 
   return (
     <div className='h-screen w-full p-8'>
@@ -45,19 +60,19 @@ function Overview({ userData }) {
           {/* Total Cash */}
           <div className='p-6 rounded-xl bg-white shadow-xl hover:shadow-2xl transition duration-300'>
             <h2 className="font-semibold text-lg text-gray-700">Total Cash</h2>
-            <p className="text-3xl font-bold text-green-600">{formatCurrency(financialData.totalCash)}</p>
+            <p className="text-3xl font-bold text-green-600">{formatCurrency(data.totalCash)}</p>
           </div>
 
           {/* Total Revenues */}
           <div className='p-6 rounded-xl bg-white shadow-xl hover:shadow-2xl transition duration-300'>
             <h2 className="font-semibold text-lg text-gray-700">Accounts Receivable</h2>
-            <p className="text-3xl font-bold text-blue-600">{formatCurrency(financialData.totalRevenues)}</p>
+            <p className="text-3xl font-bold text-blue-600">{formatCurrency(data.receivables)}</p>
           </div>
 
           {/* Total Expenses */}
           <div className='p-6 rounded-xl bg-white shadow-xl hover:shadow-2xl transition duration-300'>
             <h2 className="font-semibold text-lg text-gray-700">Accounts Payable</h2>
-            <p className="text-3xl font-bold text-red-600">{formatCurrency(financialData.totalExpenses)}</p>
+            <p className="text-3xl font-bold text-red-600">{formatCurrency(data.payables)}</p>
           </div>
         </div>
 

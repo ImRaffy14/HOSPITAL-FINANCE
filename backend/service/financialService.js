@@ -4,6 +4,8 @@ const {
     expenses
 } = require('../models/aggregation/financialAggregation')
 const financialSummary = require('../models/financialSummaryModel')
+const cashFlow  = require('../models/aggregation/analyticsAggregation')
+
 
 // GET CHART OF ACCOUNTS
 exports.chartOfAccounts = async () => {
@@ -32,6 +34,24 @@ exports.chartOfAccounts = async () => {
         expenses: resultExpenses,
         assets,
         equity
+    }
+    return data
+}
+
+// GET ANALYTICS
+exports.analytics = async () => {
+    const resultLiabilites = await liabilities()
+    const result = await cashFlow()
+    const resultRevenue = await revenue()
+    const resultAsset = await financialSummary.findOne({})
+    const data = {
+        cashFlow: result,
+        totalCash: resultAsset.totalCash,
+        receivables: resultRevenue.receivables,
+        payables:   resultLiabilites.operatingExpenses +
+                    resultLiabilites.medicalSupplies +
+                    resultLiabilites.medicalEquipments +
+                    resultLiabilites.staffAndWages
     }
     return data
 }
