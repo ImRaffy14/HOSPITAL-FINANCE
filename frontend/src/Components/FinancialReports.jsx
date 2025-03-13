@@ -17,7 +17,7 @@ const FinancialReports = ({ data }) => {
   const totalExpenses = Object.values(data.expenses).reduce((acc, val) => acc + val, 0);
   const totalLiabilities = Object.values(data.liabilites).reduce((acc, val) => acc + val, 0);
   const netIncome = data.revenue - totalExpenses;
-  const reportRef = useRef(); // For capturing the component as an image
+  const reportRef = useRef();
 
   const chartData = [
     { category: "Revenue", amount: data.revenue },
@@ -29,8 +29,7 @@ const FinancialReports = ({ data }) => {
     const doc = new jsPDF();
     doc.text("Financial Reports", 20, 10);
 
-    // Capture the report as an image
-    const canvas = await html2canvas(reportRef.current);
+    const canvas = await html2canvas(reportRef.current, { scale: 2, useCORS: true });
     const imgData = canvas.toDataURL("image/png");
 
     doc.addImage(imgData, "PNG", 10, 20, 190, 0);
@@ -44,7 +43,6 @@ const FinancialReports = ({ data }) => {
       </button>
 
       <div ref={reportRef} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Balance Sheet */}
         <div className="card bg-base-100 shadow-md p-4 rounded-lg">
           <div className="card-body">
             <h2 className="card-title">Balance Sheet</h2>
@@ -55,7 +53,6 @@ const FinancialReports = ({ data }) => {
           </div>
         </div>
 
-        {/* Income Statement */}
         <div className="card bg-base-100 shadow-md p-4 rounded-lg">
           <div className="card-body">
             <h2 className="card-title">Income Statement</h2>
@@ -65,20 +62,14 @@ const FinancialReports = ({ data }) => {
           </div>
         </div>
 
-        {/* Cash Flow Statement */}
         <div className="card bg-base-100 shadow-md p-4 rounded-lg md:col-span-2">
           <div className="card-body">
             <h2 className="card-title">Cash Flow Statement</h2>
-            <ResponsiveContainer width="100%" height={350}> {/* Increased height for better spacing */}
-              <AreaChart 
-                data={chartData} 
-                margin={{ top: 20, right: 40, left: 20, bottom: 20 }} // Add margin
-              >
+            <ResponsiveContainer width="100%" height={350}>
+              <AreaChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="category" />
-                <YAxis 
-                  tickFormatter={(value) => `₱${value.toLocaleString()}`} 
-                />
+                <YAxis tickFormatter={(value) => `₱${value.toLocaleString()}`} />
                 <Tooltip formatter={(value) => `₱${value.toLocaleString()}`} />
                 <Legend />
                 <Area type="monotone" dataKey="amount" stroke="#6366F1" fill="#4F46E5" />
@@ -87,7 +78,6 @@ const FinancialReports = ({ data }) => {
           </div>
         </div>
 
-        {/* Financial Recommendations */}
         <div className="card bg-base-100 shadow-md p-4 rounded-lg md:col-span-2">
           <div className="card-body">
             <h2 className="card-title">Financial Insights & Recommendations</h2>

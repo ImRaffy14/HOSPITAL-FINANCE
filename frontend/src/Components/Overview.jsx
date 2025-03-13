@@ -9,6 +9,10 @@ function Overview({ userData }) {
 
   const urlAPI = import.meta.env.VITE_API_URL
 
+  const getCurrentMonth = () => {
+    return new Date().toLocaleString('en-US', { month: 'long' });
+  };
+
   const formatCurrency = (value) => {
     return `₱${(value || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
   };
@@ -78,7 +82,8 @@ function Overview({ userData }) {
 
         {/* Financial Analytics Area Chart */}
         <div className='mt-10 bg-white p-8 rounded-xl shadow-xl'>
-          <h2 className="font-semibold text-lg text-gray-700 mb-4">Cash Flow Overview</h2>
+          <h2 className="font-semibold text-lg text-gray-700">Cash Flow Overview</h2>
+          <h2 className="font-semibold text-lg text-gray-700 mb-8">Month of {getCurrentMonth()}</h2>
           <ResponsiveContainer width='100%' height={300}>
             <AreaChart data={chartData}>
               <CartesianGrid strokeDasharray="3 3" />

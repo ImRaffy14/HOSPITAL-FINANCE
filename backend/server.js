@@ -16,6 +16,7 @@ const budgetRoutes = require('./routes/budgetRoutes')
 const cashManageRoute = require('./routes/cashManageRoute')
 const insuranceClaimsRoutes = require('./routes/insuranceClaimsRoutes')
 const financialRoutes = require('./routes/financialRoutes')
+const financialReportRoutes = require('./routes/financialReportRoutes')
 
 
 //Middlewares
@@ -53,6 +54,7 @@ app.use('/budget', budgetRoutes)
 app.use('/cash', cashManageRoute)
 app.use('/insurance', insuranceClaimsRoutes)
 app.use('/financial', financialRoutes)
+app.use('/financial-reports', financialReportRoutes)
 
 
 // Connect to MongoDB

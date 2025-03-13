@@ -47,7 +47,7 @@ exports.analytics = async () => {
     const data = {
         cashFlow: result,
         totalCash: resultAsset.totalCash,
-        receivables: resultRevenue.receivables,
+        receivables: resultRevenue.receivables,  
         payables:   resultLiabilites.operatingExpenses +
                     resultLiabilites.medicalSupplies +
                     resultLiabilites.medicalEquipments +

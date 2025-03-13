@@ -9,7 +9,6 @@ import axios from "axios"
 import { toast } from "react-toastify"
 
 function insuranceClaims() {
-
   const [searchText, setSearchText] = useState('')
   const [insuranceBudget, setInsuranceBudget] = useState(0)
   const [claimAmount, setClaimAmount] = useState('');

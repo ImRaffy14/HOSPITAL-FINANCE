@@ -1,5 +1,6 @@
 const budgetRecords = require('../budgetRecordsModel')
 const billingRecords = require('../billingModel')
+const InsuranceClaimsRecords = require('../insuranceClaimsModel')
 
 const currentDate = new Date();
 const currentYear = currentDate.getFullYear();
@@ -194,11 +195,27 @@ const expenses = async () => {
         }
     ]);
 
+    // INSURANCE CLAIMS
+    const insuranceClaims = await InsuranceClaimsRecords.aggregate([
+        {
+            $match: {
+                claimDate: { $gte: startOfMonth, $lte: endOfMonth },
+            }
+        },
+        {
+            $group: {
+                _id: null,
+                total: { $sum: '$claimAmount' }
+            }
+        }
+    ])
+
     return {
         operatingExpenses: operatingExpenses.length > 0 ? operatingExpenses[0].total : 0,
         medicalSupplies: medicalSupplies.length > 0 ? medicalSupplies[0].total : 0,
         medicalEquipments: medicalEquipments.length > 0 ? medicalEquipments[0].total : 0,
-        staffAndWages: staffAndWages.length > 0 ? staffAndWages[0].total : 0
+        staffAndWages: staffAndWages.length > 0 ? staffAndWages[0].total : 0,
+        insuranceClaims: insuranceClaims.length > 0 ? insuranceClaims[0].total : 0
     };
 }
 

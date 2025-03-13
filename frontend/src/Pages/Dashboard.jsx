@@ -19,6 +19,7 @@ import { TbReportAnalytics } from "react-icons/tb";
 import { FaChartBar } from "react-icons/fa";
 import axios from 'axios'
 import Logo from '../../assets/Nodado.jfif'
+import FinancialReportList from '../Components/modal/FinancialReportList';
 
 
 
@@ -130,7 +131,7 @@ function AdminPage() {
                                     <li className='font-semibold'><NavLink to="budgetManagement" activeClassName="bg-gray-700"><FaMoneyBills />BUDGET MANAGEMENT</NavLink></li>
                                     <li className='font-semibold'><NavLink to="insuranceClaims" activeClassName="bg-gray-700"><LuBaggageClaim />INSURANCE CLAIMS</NavLink></li>
                                     <h1 className='text-center border-b border-t border-gray-400 border-dotted text-md bg-slate-100'>GENERAL LEDGER</h1>
-                                    <li className='font-semibold'><NavLink to="financialReports" activeClassName="bg-gray-700"><TbReportAnalytics />FINANCIAL REPORTS</NavLink></li>
+                                    <li className='font-semibold'><NavLink to="financialReportList" activeClassName="bg-gray-700"><TbReportAnalytics />FINANCIAL REPORTS</NavLink></li>
                                     <li className='font-semibold'><NavLink to="chartOfAccounts" activeClassName="bg-gray-700"><FaChartBar />CHART OF ACCOUNTS</NavLink></li>
                                     <h1 className='text-center border-b border-t border-gray-400 border-dotted text-md bg-slate-100'>USER MANAGEMENT</h1>
                                     <li className='font-semibold'><NavLink to="accountsManagement" activeClassName="bg-gray-700"><MdSupervisorAccount />USER MANAGEMENT</NavLink></li>
@@ -165,8 +166,9 @@ function AdminPage() {
                             <Route path="budgetManagement" element={<BudgetManagement/>} />
                             <Route path="insuranceClaims" element={<InsuranceClaims/>} />
                             <Route path="paymentManagement" element={<PaymentManagement userData={profile}/>} />
+                            <Route path="financialReportList" element={<FinancialReportList/>} />
                             <Route path="financialReports" element={<FinancialReports data={dummyData}/>} />
-                            <Route path="chartOfAccounts" element={<ChartOfAccounts/>} />
+                            <Route path="chartOfAccounts" element={<ChartOfAccounts userData={profile} />} />
                             <Route path="billing" element={<Billing />} />
                         </Routes>
                     </div>

@@ -66,3 +66,7 @@ GET http://localhost:8056/financial/chart-of-accounts
 ## GET ANALYTICS
 ###
 GET http://localhost:8056/financial/analytics
+
+## GET FINANCIAL REPORTS
+###
+GET http://localhost:8056/financial-reports/get-financial-reports
