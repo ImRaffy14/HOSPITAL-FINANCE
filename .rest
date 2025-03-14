@@ -70,3 +70,7 @@ GET http://localhost:8056/financial/analytics
 ## GET FINANCIAL REPORTS
 ###
 GET http://localhost:8056/financial-reports/get-financial-reports
+
+### PROMPT TO AI
+###
+POST http://localhost:8056/ai/prompt-ai

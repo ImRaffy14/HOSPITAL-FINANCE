@@ -20,6 +20,7 @@ import { FaChartBar } from "react-icons/fa";
 import axios from 'axios'
 import Logo from '../../assets/Nodado.jfif'
 import FinancialReportList from '../Components/modal/FinancialReportList';
+import AiSupport from '../Components/AiSupport'
 
 
 
@@ -170,6 +171,7 @@ function AdminPage() {
                             <Route path="financialReports" element={<FinancialReports data={dummyData}/>} />
                             <Route path="chartOfAccounts" element={<ChartOfAccounts userData={profile} />} />
                             <Route path="billing" element={<Billing />} />
+                            <Route path="AiSupport" element={<AiSupport/>} />
                         </Routes>
                     </div>
                 </div>
