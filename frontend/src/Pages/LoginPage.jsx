@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import backgroundImg from '../../assets/Nodado.jpg';  
+import Logo from '../../assets/Nodado.jfif'
 
 const LoginPage = () => {
   const [username, setUsername] = useState('');
@@ -58,7 +59,7 @@ const LoginPage = () => {
       <div className="w-1/2 bg-white flex flex-col items-center justify-center p-8">
         {/* Logo */}
         <div className="mb-6">
-          <img src="/assets/Nodado.jfif" alt="Finance Department" className="h-23 w-auto" />
+          <img src={Logo} alt="Finance Department" className="h-23 w-auto" />
           <h1 className="text-2xl font-bold mb-4">Finance Department</h1>
         </div>
 
