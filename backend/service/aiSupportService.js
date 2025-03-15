@@ -7,6 +7,8 @@ const {
 const financialSummary = require('../models/financialSummaryModel')
 const cashFlow  = require('../models/aggregation/analyticsAggregation')
 const financialReport = require('../models/financialReportModel')
+const insuranceClaims = require('../models/insuranceClaimsModel')
+
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINE_SECRET);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
@@ -14,6 +16,7 @@ const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 const financials = async () => {
     const reports = await financialReport.find({})
+    const insuranceClaimSummary = await insuranceClaims.find({})
     const resultLiabilites = await liabilities()
     const resultRevenue = await revenue()
     const resultExpenses = await expenses()
@@ -39,7 +42,9 @@ const financials = async () => {
         expenses: resultExpenses,
         assets,
         equity,
-        financialReports: reports
+        financialReports: reports,
+        insuranceClaims: insuranceClaimSummary,
+        financialSummary: resultAsset
     }
 
     return JSON.stringify(data);
@@ -53,6 +58,8 @@ exports.prompt = async (data) => {
         specializing in financial analysis. Your responses will be based solely on the provided financial data, 
         specifically the Chart of Accounts, which includes liabilities, revenue, expenses, assets, and equity.
         Here is the data you will be working with:
+        *THE BUDGET ALLOCATION IS FROM FINANCIAL SUMMARY
+        * THE INSURANCE CLAIMS IS BASED ON MAINTENANCE EXPENSES
         ${financialData}
 
 
@@ -73,6 +80,7 @@ exports.prompt = async (data) => {
         * If asked to compare categories, do so, and explain the differences.
         * Do not provide any information outside of the provided JSON data.
         `;
+        console.log(financialData.financialSummary)
         const result = await model.generateContent(prompts);
         const response = result.response;
         const answer = response.candidates[0].content.parts[0].text;

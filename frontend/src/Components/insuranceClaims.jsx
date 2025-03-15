@@ -45,6 +45,14 @@ function insuranceClaims() {
     )
   );
 
+  const checkLength = (e) => {
+    const value = e.target.value
+
+    if(value.length > 9) return
+
+    setClaimAmount(value)
+  }
+
   useEffect(() => {
 
     //FETCH DATA
@@ -167,8 +175,11 @@ function insuranceClaims() {
                       name="claimAmount"
                       placeholder="Enter claim amount"
                       className="input input-bordered w-full mt-1"
+                      max={500000}
+                      maxLength={9}
+                      min={1}
                       value={claimAmount}
-                      onChange={(e) => setClaimAmount(e.target.value)}
+                      onChange={checkLength}
                       required
                     />
                   </div>
