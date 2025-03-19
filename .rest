@@ -74,3 +74,7 @@ GET http://localhost:8056/financial-reports/get-financial-reports
 ### PROMPT TO AI
 ###
 POST http://localhost:8056/ai/prompt-ai
+
+### GET ALL DATA FOR INTEGRATION CORE 3
+###
+GET http://localhost:8056/api/get-data

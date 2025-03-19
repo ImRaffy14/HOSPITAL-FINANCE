@@ -193,7 +193,9 @@ function Billing() {
 
     // Calculate tax
     const calculateTax = () => 
-      (calculateSubtotal() * (billingData.discount === "senior" || billingData.discount === "pwd" ? 20 : 0)) / 100;
+      (calculateSubtotal() * 
+    (billingData.discount === "senior" || billingData.discount === "pwd" || billingData.discount === "Stake Holder Dependent" ? 
+      20 : billingData.discount === "Stake Holder" ? 35 : 0 )) / 100;
     
     // Calculate total with tax
     const calculateTotal = () => calculateSubtotal() - calculateTax() - billingData.doctorTax;
@@ -208,7 +210,9 @@ function Billing() {
     };
 
     const editCalculateTax = () => 
-      (calculateSubtotal() * (selectedData.discount === "senior" || selectedData.discount === "pwd" ? 20 : 0)) / 100;
+      (calculateSubtotal() * 
+    (selectedData.discount === "senior" || selectedData.discount === "pwd" || selectedData.discount === "Stake Holder Dependent" ? 
+      20 : selectedData.discount === "Stake Holder" ? 35 : 0 )) / 100;
     
     
     // Calculate total with tax
@@ -398,6 +402,28 @@ function Billing() {
                       <input
                         type="radio"
                         name="discount"
+                        value="Stake Holder"
+                        checked={billingData?.discount === "Stake Holder"}
+                        onChange={(e) => setBillingData({ ...billingData, discount: e.target.value })}
+                        className="radio radio-primary"
+                      />
+                      <span>Stake Holder 35%</span>
+                    </label>
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="radio"
+                        name="discount"
+                        value="Stake Holder Dependent"
+                        checked={billingData?.discount === "Stake Holder Dependent"}
+                        onChange={(e) => setBillingData({ ...billingData, discount: e.target.value })}
+                        className="radio radio-primary"
+                      />
+                      <span>Stake Holder Dependent 20%</span>
+                    </label>
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="radio"
+                        name="discount"
                         value="none"
                         checked={billingData.discount === "none" || !billingData.discount}
                         onChange={(e) => setBillingData({ ...billingData, discount: e.target.value })}
@@ -580,6 +606,28 @@ function Billing() {
                   <input
                     type="radio"
                     name="discount"
+                    value="Stake Holder"
+                    checked={selectedData?.discount === "Stake Holder"}
+                    onChange={(e) => setSelectedData({ ...selectedData, discount: e.target.value })}
+                    className="radio radio-primary"
+                  />
+                  <span>Stake Holder 35%</span>
+                </label>
+                <label className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    name="discount"
+                    value="Stake Holder Dependent"
+                    checked={selectedData?.discount === "Stake Holder Dependent"}
+                    onChange={(e) => setSelectedData({ ...selectedData, discount: e.target.value })}
+                    className="radio radio-primary"
+                  />
+                  <span>Stake Holder Indepdent 20%</span>
+                </label>
+                <label className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    name="discount"
                     value="none"
                     checked={selectedData?.discount === "none" || !selectedData?.discount}
                     onChange={(e) => setSelectedData({ ...selectedData, discount: e.target.value })}
@@ -716,8 +764,8 @@ function Billing() {
                 <p><strong>Billing ID:</strong> {selectedData._id}</p>
                 <p><strong>Patient Name:</strong> {selectedData.patientName}</p>
                 <p><strong>Patient Age:</strong> {selectedData.patientAge}</p>
-                <p><strong>Patient Age:</strong>
-                {selectedData.discount === "senior" || selectedData.discount === "senior" ? ` ${selectedData.discount} (20%)` : selectedData.discount }</p>
+                <p><strong>Discount:</strong>
+                { selectedData.discount === "senior" || selectedData.discount === "pwd" || selectedData.discount === "Stake Holder Dependent" ? ` ${selectedData.discount} (20%)` : selectedData.discount === "Stake Holder" ? ` ${selectedData.discount} (35%)` : selectedData.discount}</p>
                 <p><strong>Services:</strong> { selectedData.services.map((items, index) => 
                   <span className="text-black" key={index}>[{items.name} ({formatCurrency(items.cost)})]</span>
                 )}</p>
