@@ -4,6 +4,7 @@ const BillingSchema = new mongoose.Schema(
 {
     patientName: { type: String, required: true },
     patientAge: { type: Number, required: true },
+    discount: { type: String, require: true},
     services: [
     {
         name: { type: String, required: true },

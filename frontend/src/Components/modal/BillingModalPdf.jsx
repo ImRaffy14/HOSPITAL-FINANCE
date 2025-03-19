@@ -84,8 +84,8 @@ function BillingModalPdf({ selectedData, onClose}) {
                     {/* Billing Summary */}
                     <div className="mt-5">
                     <p><strong>Sub Total:</strong> {formatCurrency((selectedData?.totalAmount || 0) + selectedData?.taxAmount )}</p>
-                        <p><strong>Discount:</strong> {selectedData?.doctorTax || 0}%</p>
-                        <p><strong>Discount Amount:</strong> {formatCurrency(selectedData?.taxAmount || 0)}</p>
+                        <p><strong>Discount:</strong> {selectedData.discount === "senior" || selectedData.discount === "pwd" ? 20 : 0}%</p>
+                        <p><strong>PHIC:</strong> {formatCurrency(selectedData?.doctorTax || 0)}</p>
                         <hr className="my-2 border-gray-400" />
                         <p className="text-lg font-bold"><strong>Total Amount:</strong> {formatCurrency(selectedData?.totalAmount || 0)}</p>
                     </div>

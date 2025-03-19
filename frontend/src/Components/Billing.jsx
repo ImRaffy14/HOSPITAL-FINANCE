@@ -20,6 +20,7 @@ function Billing() {
       services: [{ name: "", cost: "" }],
       medications: [{ name: "", cost: "" }],
       paymentStatus: "Pending",
+      discount: "",
       doctorTax: 0,
     });
     const [showSummary, setShowSummary] = useState(false);
@@ -191,10 +192,11 @@ function Billing() {
     };
 
     // Calculate tax
-    const calculateTax = () => (calculateSubtotal() * billingData.doctorTax) / 100;
+    const calculateTax = () => 
+      (calculateSubtotal() * (billingData.discount === "senior" || billingData.discount === "pwd" ? 20 : 0)) / 100;
     
     // Calculate total with tax
-    const calculateTotal = () => calculateSubtotal() - calculateTax();
+    const calculateTotal = () => calculateSubtotal() - calculateTax() - billingData.doctorTax;
 
 
     // Calculate subtotal edit
@@ -205,11 +207,12 @@ function Billing() {
       );
     };
 
-    // Calculate tax
-    const editCalculateTax = () => (editCalculateSubtotal() * selectedData.doctorTax) / 100;
+    const editCalculateTax = () => 
+      (calculateSubtotal() * (selectedData.discount === "senior" || selectedData.discount === "pwd" ? 20 : 0)) / 100;
+    
     
     // Calculate total with tax
-    const editCalculateTotal = () => editCalculateSubtotal() - editCalculateTax();
+    const editCalculateTotal = () => editCalculateSubtotal() - editCalculateTax() - selectedData.doctorTax;
 
     // Review billing before submitting
     const handleReviewBilling = (event) => {
@@ -365,6 +368,46 @@ function Billing() {
                   />
                 </div>
 
+                {/* Discount Radio Buttons */}
+                <div>
+                  <label className="block font-medium">Discounts</label>
+                  <div className="flex gap-4 mt-2">
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="radio"
+                        name="discount"
+                        value="senior"
+                        checked={billingData.discount === "senior"}
+                        onChange={(e) => setBillingData({ ...billingData, discount: e.target.value })}
+                        className="radio radio-primary"
+                      />
+                      <span>Senior 20%</span>
+                    </label>
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="radio"
+                        name="discount"
+                        value="pwd"
+                        checked={billingData.discount === "pwd"}
+                        onChange={(e) => setBillingData({ ...billingData, discount: e.target.value })}
+                        className="radio radio-primary"
+                      />
+                      <span>PWD 20%</span>
+                    </label>
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="radio"
+                        name="discount"
+                        value="none"
+                        checked={billingData.discount === "none" || !billingData.discount}
+                        onChange={(e) => setBillingData({ ...billingData, discount: e.target.value })}
+                        className="radio radio-primary"
+                      />
+                      <span>None</span>
+                    </label>
+                  </div>
+                </div>
+
                 {/* Services Section */}
                 <div>
                   <label className="block font-medium">Services Provided</label>
@@ -433,7 +476,7 @@ function Billing() {
 
                 {/* Doctor's Tax */}
                 <div>
-                  <label className="block font-medium">PHIC (%)</label>
+                  <label className="block font-medium">PHIC</label>
                   <input
                     type="number"
                     className="input input-bordered w-full"
@@ -506,6 +549,46 @@ function Billing() {
                   required
                 />
               </div>
+
+              {/* Discount Radio Buttons */}
+              <div>
+              <label className="block font-medium">Discounts</label>
+              <div className="flex gap-4 mt-2">
+                <label className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    name="discount"
+                    value="senior"
+                    checked={selectedData?.discount === "senior"}
+                    onChange={(e) => setSelectedData({ ...selectedData, discount: e.target.value })}
+                    className="radio radio-primary"
+                  />
+                  <span>Senior 20%</span>
+                </label>
+                <label className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    name="discount"
+                    value="pwd"
+                    checked={selectedData?.discount === "pwd"}
+                    onChange={(e) => setSelectedData({ ...selectedData, discount: e.target.value })}
+                    className="radio radio-primary"
+                  />
+                  <span>PWD 20%</span>
+                </label>
+                <label className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    name="discount"
+                    value="none"
+                    checked={selectedData?.discount === "none" || !selectedData?.discount}
+                    onChange={(e) => setSelectedData({ ...selectedData, discount: e.target.value })}
+                    className="radio radio-primary"
+                  />
+                  <span>None</span>
+                </label>
+              </div>
+            </div>
 
               {/* Services Section */}
               <div>
@@ -603,7 +686,7 @@ function Billing() {
 
               {/* Doctor's Tax */}
               <div>
-                <label className="block font-medium">PHIC (%)</label>
+                <label className="block font-medium">PHIC</label>
                 <input
                   type="number"
                   className="input input-bordered w-full"
@@ -633,6 +716,8 @@ function Billing() {
                 <p><strong>Billing ID:</strong> {selectedData._id}</p>
                 <p><strong>Patient Name:</strong> {selectedData.patientName}</p>
                 <p><strong>Patient Age:</strong> {selectedData.patientAge}</p>
+                <p><strong>Patient Age:</strong>
+                {selectedData.discount === "senior" || selectedData.discount === "senior" ? ` ${selectedData.discount} (20%)` : selectedData.discount }</p>
                 <p><strong>Services:</strong> { selectedData.services.map((items, index) => 
                   <span className="text-black" key={index}>[{items.name} ({formatCurrency(items.cost)})]</span>
                 )}</p>
