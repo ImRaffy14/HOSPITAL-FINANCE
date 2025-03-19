@@ -313,6 +313,31 @@ function budgetManagement() {
             <div className="modal-box">
               <h3 className="font-bold text-lg mb-5">Record New Budget</h3>
               <form onSubmit={updateSubmit} className="space-y-4">
+
+                {/* Budget Type Field */}
+                <div>
+                  <label htmlFor="budgetType" className="block text-sm font-medium">
+                    Budget Type
+                  </label>
+                  <select
+                    id="budgetType"
+                    name="budgetType"
+                    className="select select-bordered w-full mt-1"
+                    value={selectedData?.budgetType}
+                    onChange={(e) => setSelectedData((prevData) => ({
+                      ...prevData,
+                      budgetType: e.target.value
+                    }))}
+                    required
+                  >
+                    <option value="" disabled>Select budget type</option>
+                    <option value="Operating Expenses">Operating Expenses</option>
+                    <option value="Medical Supplies">Medical Supplies</option>
+                    <option value="Medical Equipments">Medical Equipments</option>
+                    <option value="Staff and Wages">Staff and Wages</option>
+                  </select>
+                </div>
+
                 {/* Department Field */}
                 <div>
                   <label htmlFor="department" className="block text-sm font-medium">
@@ -356,30 +381,6 @@ function budgetManagement() {
                     }))}
                     required
                   />
-                </div>
-
-                {/* Budget Type Field */}
-                <div>
-                  <label htmlFor="budgetType" className="block text-sm font-medium">
-                    Budget Type
-                  </label>
-                  <select
-                    id="budgetType"
-                    name="budgetType"
-                    className="select select-bordered w-full mt-1"
-                    value={selectedData?.budgetType}
-                    onChange={(e) => setSelectedData((prevData) => ({
-                      ...prevData,
-                      budgetType: e.target.value
-                    }))}
-                    required
-                  >
-                    <option value="" disabled>Select budget type</option>
-                    <option value="Operating Expenses">Operating Expenses</option>
-                    <option value="Medical Supplies">Medical Supplies</option>
-                    <option value="Medical Equipments">Medical Equipments</option>
-                    <option value="Staff and Wages">Staff and Wages</option>
-                  </select>
                 </div>
 
                 {/* Description Field */}
@@ -468,6 +469,28 @@ function budgetManagement() {
             <div className="modal-box">
               <h3 className="font-bold text-lg mb-5">Record New Budget</h3>
               <form onSubmit={handleSubmit} className="space-y-4">
+                {/* Budget Type Field */}
+                <div>
+                  <label htmlFor="budgetType" className="block text-sm font-medium">
+                    Budget Type
+                  </label>
+                  <select
+                    id="budgetType"
+                    name="budgetType"
+                    className="select select-bordered w-full mt-1"
+                    value={budgetType}
+                    onChange={(e) => setBudgetType(e.target.value)}
+                    required
+                  >
+                    <option value="" disabled>Select budget type</option>
+                    <option value="Operating Expenses">Operating Expenses</option>
+                    <option value="Medical Supplies">Medical Supplies</option>
+                    <option value="Medical Equipments">Medical Equipments</option>
+                    <option value="Staff and Wages">Staff and Wages</option>
+                  </select>
+                </div>
+
+
                 {/* Department Field */}
                 <div>
                   <label htmlFor="department" className="block text-sm font-medium">
@@ -505,27 +528,6 @@ function budgetManagement() {
                     onChange={(e) => setAmount(e.target.value)}
                     required
                   />
-                </div>
-
-                {/* Budget Type Field */}
-                <div>
-                  <label htmlFor="budgetType" className="block text-sm font-medium">
-                    Budget Type
-                  </label>
-                  <select
-                    id="budgetType"
-                    name="budgetType"
-                    className="select select-bordered w-full mt-1"
-                    value={budgetType}
-                    onChange={(e) => setBudgetType(e.target.value)}
-                    required
-                  >
-                    <option value="" disabled>Select budget type</option>
-                    <option value="Operating Expenses">Operating Expenses</option>
-                    <option value="Medical Supplies">Medical Supplies</option>
-                    <option value="Medical Equipments">Medical Equipments</option>
-                    <option value="Staff and Wages">Staff and Wages</option>
-                  </select>
                 </div>
 
                 {/* Description Field */}

@@ -7,7 +7,7 @@ import FinancialReports from '../Components/FinancialReports';
 import ChartOfAccounts from '../Components/ChartOfAccounts';
 import InsuranceClaims from '../Components/insuranceClaims';
 import Overview from '../Components/Overview';
-import PaymentManagement from '../Components/paymentManagement'
+import PaymentManagement from '../Components/paymentManagement';
 import Billing from '../Components/Billing';
 import { MdDashboard } from "react-icons/md";
 import { FaMoneyBills } from "react-icons/fa6";
@@ -17,20 +17,19 @@ import { MdSupervisorAccount } from "react-icons/md";
 import { IoIosLogOut } from "react-icons/io";
 import { TbReportAnalytics } from "react-icons/tb";
 import { FaChartBar } from "react-icons/fa";
-import axios from 'axios'
-import Logo from '../../assets/Nodado.jfif'
+import axios from 'axios';
+import Logo from '../../assets/Nodado.jfif';
 import FinancialReportList from '../Components/modal/FinancialReportList';
-import AiSupport from '../Components/AiSupport'
-
-
+import AiSupport from '../Components/AiSupport';
+import ChatInterface from '../Components/ChatInterface'; // Import the ChatInterface component
 
 function AdminPage() {
-
     const [isToggled, setIsToggled] = useState(true);
     const [isVerifying, setIsVerifying] = useState(true);
-    const [profile, setProfile] = useState('')
+    const [profile, setProfile] = useState('');
+    const [isChatOpen, setIsChatOpen] = useState(false); // State to control chat visibility
 
-    const urlAPI = import.meta.env.VITE_API_URL
+    const urlAPI = import.meta.env.VITE_API_URL;
     const navigate = useNavigate();
 
     const handleSideNav = () => {
@@ -38,38 +37,40 @@ function AdminPage() {
     };
 
     const handleLogout = async () => {
-        await axios.post(`${urlAPI}/auth-api/logout`, {username: profile.username}, {
+        await axios.post(`${urlAPI}/auth-api/logout`, { username: profile.username }, {
             withCredentials: true
-        })
-        navigate('/')
+        });
+        navigate('/');
+    };
+
+    const toggleChat = () => {
+        setIsChatOpen(!isChatOpen);
     };
 
     useEffect(() => {
         const verify = async () => {
-            try{
-                const response = await axios.get(`${urlAPI}/auth-api/protected`,{
+            try {
+                const response = await axios.get(`${urlAPI}/auth-api/protected`, {
                     withCredentials: true
-                })
-    
-                if(response){
-                    setProfile(response.data)
-                    setIsVerifying(false)
+                });
+
+                if (response) {
+                    setProfile(response.data);
+                    setIsVerifying(false);
                 }
-            }
-            catch(error){
-                console.log(error.response)
+            } catch (error) {
+                console.log(error.response);
                 toast.error('You are not authorized to view this page', {
                     position: "top-right"
-                })
-                handleLogout()
+                });
+                handleLogout();
             }
-        }
+        };
 
-        verify()
-    }, [])
+        verify();
+    }, []);
 
-
-    if(isVerifying){
+    if (isVerifying) {
         return (
             <div className="flex items-center justify-center h-screen">
                 <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500"></div>
@@ -98,8 +99,7 @@ function AdminPage() {
         equity: {
             totalEquity: 400000, // Hospital's net worth
         },
-        };
-        
+    };
 
     return (
         <>
@@ -114,10 +114,10 @@ function AdminPage() {
 
                         <ul className="menu menu-vertical mt-10">
                             <li className='border-b border-gray-300 font-semibold'><NavLink to="/Dashboard/overview" activeClassName="bg-gray-700"><MdDashboard />DASHBOARD</NavLink></li>
-                            {(profile.role === 'Accountant' || profile.role === 'Billing Officer' ) && (
+                            {(profile.role === 'Accountant' || profile.role === 'Billing Officer') && (
                                 <ul className="menu menu-vertical">
-                                    <h1 className='text-center mt-2 border-b border-t border-gray-400 border-dotted text-md bg-slate-100'>AI Decision Support</h1>
-                                    <li className='font-semibold'><NavLink to="aiSupport" activeClassName="bg-gray-700"><FaMoneyBills />CHAT AI</NavLink></li>
+                                    {/* <h1 className='text-center mt-2 border-b border-t border-gray-400 border-dotted text-md bg-slate-100'>AI Decision Support</h1>
+                                    <li className='font-semibold'><NavLink to="aiSupport" activeClassName="bg-gray-700"><FaMoneyBills />CHAT AI</NavLink></li> */}
                                     <h1 className='text-center mt-2 border-b border-t border-gray-400 border-dotted text-md bg-slate-100'>BILLING</h1>
                                     <li className='font-semibold'><NavLink to="billing" activeClassName="bg-gray-700"><FaMoneyBills />BILLING & INVOICE</NavLink></li>
                                     <h1 className='text-center border-b border-t border-gray-400 border-dotted text-md bg-slate-100'>FINANCE MANAGEMENT</h1>
@@ -127,8 +127,8 @@ function AdminPage() {
                             )}
                             {(profile.role === 'Medical Director') && (
                                 <ul className="menu menu-vertical">
-                                    <h1 className='text-center mt-2 border-b border-t border-gray-400 border-dotted text-md bg-slate-100'>AI Decision Support</h1>
-                                    <li className='font-semibold'><NavLink to="aiSupport" activeClassName="bg-gray-700"><FaMoneyBills />CHAT AI</NavLink></li>
+                                    {/* <h1 className='text-center mt-2 border-b border-t border-gray-400 border-dotted text-md bg-slate-100'>AI Decision Support</h1>
+                                    <li className='font-semibold'><NavLink to="aiSupport" activeClassName="bg-gray-700"><FaMoneyBills />CHAT AI</NavLink></li> */}
                                     <h1 className='text-center  border-b border-t border-gray-400 border-dotted text-md bg-slate-100'>BILLING</h1>
                                     <li className='font-semibold'><NavLink to="billing" activeClassName="bg-gray-700"><FaMoneyBills />BILLING & INVOICE</NavLink></li>
                                     <h1 className='text-center border-b border-t border-gray-400 border-dotted text-md bg-slate-100'>FINANCE MANAGEMENT</h1>
@@ -159,26 +159,36 @@ function AdminPage() {
                             <div className="navbar-center">
                                 <a className="btn btn-ghost text-xl">FINANCIAL MANAGEMENT SYSTEM</a>
                             </div>
-                            <div className="navbar-end"> 
-                                <h1 className="text-red-500 font-bold text-3xl mr-4" onClick={handleLogout}><IoIosLogOut /></h1> 
+                            <div className="navbar-end">
+                                <h1 className="text-red-500 font-bold text-3xl mr-4" onClick={handleLogout}><IoIosLogOut /></h1>
                             </div>
                         </div>
                         {/* DATA */}
                         <Routes>
-                            <Route path="accountsManagement" element={<AccountsManagement/>} />
+                            <Route path="accountsManagement" element={<AccountsManagement />} />
                             <Route path="/" element={<Navigate to="/Dashboard/overview" />} />
-                            <Route path="overview" element={<Overview userData={profile}/>} />
-                            <Route path="budgetManagement" element={<BudgetManagement/>} />
-                            <Route path="insuranceClaims" element={<InsuranceClaims/>} />
-                            <Route path="paymentManagement" element={<PaymentManagement userData={profile}/>} />
-                            <Route path="financialReportList" element={<FinancialReportList/>} />
-                            <Route path="financialReports" element={<FinancialReports data={dummyData}/>} />
+                            <Route path="overview" element={<Overview userData={profile} />} />
+                            <Route path="budgetManagement" element={<BudgetManagement />} />
+                            <Route path="insuranceClaims" element={<InsuranceClaims />} />
+                            <Route path="paymentManagement" element={<PaymentManagement userData={profile} />} />
+                            <Route path="financialReportList" element={<FinancialReportList />} />
+                            <Route path="financialReports" element={<FinancialReports data={dummyData} />} />
                             <Route path="chartOfAccounts" element={<ChartOfAccounts userData={profile} />} />
                             <Route path="billing" element={<Billing />} />
-                            <Route path="AiSupport" element={<AiSupport/>} />
+                            {/* <Route path="AiSupport" element={<AiSupport />} /> */}
                         </Routes>
                     </div>
                 </div>
+
+                {/* Chat Button and Interface */}
+                <button
+                    onClick={toggleChat}
+                    className="fixed bottom-6 right-6 bg-blue-500 text-white p-4 rounded-full shadow-lg hover:bg-blue-600 transition-all"
+                >
+                    💬
+                </button>
+
+                {isChatOpen && <ChatInterface />}
             </div>
         </>
     );

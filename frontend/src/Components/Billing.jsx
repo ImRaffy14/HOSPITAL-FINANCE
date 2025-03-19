@@ -433,7 +433,7 @@ function Billing() {
 
                 {/* Doctor's Tax */}
                 <div>
-                  <label className="block font-medium">Doctor's Tax (%)</label>
+                  <label className="block font-medium">PHIC (%)</label>
                   <input
                     type="number"
                     className="input input-bordered w-full"
@@ -603,7 +603,7 @@ function Billing() {
 
               {/* Doctor's Tax */}
               <div>
-                <label className="block font-medium">Doctor's Tax (%)</label>
+                <label className="block font-medium">PHIC (%)</label>
                 <input
                   type="number"
                   className="input input-bordered w-full"
